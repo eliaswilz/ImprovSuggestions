@@ -10,6 +10,23 @@ enum Category: String, Codable, CaseIterable, Identifiable {
     case dialogueLine
 
     var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .question:
+            "Question"
+        case .object:
+            "Object"
+        case .location:
+            "Location"
+        case .profession:
+            "Profession"
+        case .emotion:
+            "Emotion"
+        case .dialogueLine:
+            "Dialogue Line"
+        }
+    }
 }
 
 @Model

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var isShowingAddSuggestion = false
+
     init() {
         let backgroundColor = UIColor(red: 0.102, green: 0.102, blue: 0.102, alpha: 1.0)
         let borderColor = UIColor(red: 0.165, green: 0.165, blue: 0.165, alpha: 1.0)
@@ -39,31 +41,56 @@ struct ContentView: View {
     }
 
     var body: some View {
-        TabView {
-            QuestionModeView()
-                .tabItem {
-                    Label("Questions", systemImage: "questionmark.bubble")
-                }
+        NavigationStack {
+            TabView {
+                QuestionModeView()
+                    .tabItem {
+                        Label("Questions", systemImage: "questionmark.bubble")
+                            .accessibilityIdentifier("questions_tab")
+                    }
 
-            WordModeView()
-                .tabItem {
-                    Label("Words", systemImage: "textformat.abc")
-                }
+                WordModeView()
+                    .tabItem {
+                        Label("Words", systemImage: "textformat.abc")
+                            .accessibilityIdentifier("words_tab")
+                    }
 
-            GameModeView()
-                .tabItem {
-                    Label("Games", systemImage: "gamecontroller")
-                }
+                GameModeView()
+                    .tabItem {
+                        Label("Games", systemImage: "gamecontroller")
+                            .accessibilityIdentifier("games_tab")
+                    }
 
-            FavoritesView()
-                .tabItem {
-                    Label("Favorites", systemImage: "heart.fill")
+                FavoritesView()
+                    .tabItem {
+                        Label("Favorites", systemImage: "heart.fill")
+                            .accessibilityIdentifier("favorites_tab")
+                    }
+
+                SettingsView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape")
+                            .accessibilityIdentifier("settings_tab")
+                    }
+            }
+            .tint(Color.theme.brightBlue)
+            .toolbarBackground(Color.theme.darkBackground, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
+            .background(Color.theme.darkBackground)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isShowingAddSuggestion = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    .accessibilityIdentifier("add_suggestion_button")
                 }
+            }
+            .sheet(isPresented: $isShowingAddSuggestion) {
+                AddSuggestionView()
+            }
         }
-        .tint(Color.theme.brightBlue)
-        .toolbarBackground(Color.theme.darkBackground, for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
-        .background(Color.theme.darkBackground)
     }
 }
 

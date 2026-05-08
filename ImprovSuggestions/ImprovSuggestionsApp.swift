@@ -21,7 +21,16 @@ struct ImprovSuggestionsApp: App {
             DataManager.shared.preloadSuggestionsIfNeeded(modelContext: container.mainContext)
             return container
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            print("Primary ModelContainer initialization failed. Crash reporter should log this error: \(error)")
+
+            do {
+                let fallbackConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+                let fallbackContainer = try ModelContainer(for: schema, configurations: [fallbackConfiguration])
+                DataManager.shared.preloadSuggestionsIfNeeded(modelContext: fallbackContainer.mainContext)
+                return fallbackContainer
+            } catch {
+                fatalError("Could not create fallback in-memory ModelContainer: \(error)")
+            }
         }
     }()
 

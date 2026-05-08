@@ -27,6 +27,7 @@ struct QuestionModeView: View {
                         .foregroundStyle(Color.theme.offWhite)
                         .multilineTextAlignment(.leading)
                         .minimumScaleFactor(0.65)
+                        .accessibilityIdentifier("question_text")
 
                     if isShowingAudienceResponse, let secondaryContent = currentQuestion?.secondaryContent {
                         VStack(alignment: .leading, spacing: 8) {
@@ -51,14 +52,17 @@ struct QuestionModeView: View {
 
                 VStack(spacing: 16) {
                     Button("Next Question") {
+                        HapticManager.impact(.light)
                         showRandomQuestion()
                     }
                     .buttonStyle(.primaryPill)
+                    .accessibilityIdentifier("next_question_button")
 
                     Button("Simulate Audience Response") {
                         isShowingAudienceResponse = true
                     }
                     .buttonStyle(.primaryPill)
+                    .accessibilityIdentifier("simulate_audience_response_button")
                     .disabled(currentQuestion?.secondaryContent == nil)
                     .opacity(currentQuestion?.secondaryContent == nil ? 0.5 : 1)
                 }
@@ -82,7 +86,17 @@ struct QuestionModeView: View {
             questionQueue = questions.shuffled()
         }
 
-        currentQuestion = questionQueue.popLast()
+        var nextQuestion = questionQueue.popLast()
+
+        if nextQuestion?.id == currentQuestion?.id {
+            if questionQueue.isEmpty {
+                questionQueue = questions.filter { $0.id != currentQuestion?.id }.shuffled()
+            }
+
+            nextQuestion = questionQueue.popLast() ?? nextQuestion
+        }
+
+        currentQuestion = nextQuestion
         isShowingAudienceResponse = false
     }
 }

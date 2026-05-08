@@ -73,6 +73,7 @@ struct WordModeView: View {
                             .foregroundStyle(Color.theme.offWhite)
                             .multilineTextAlignment(.leading)
                             .minimumScaleFactor(0.65)
+                            .accessibilityIdentifier("suggestion_text")
                     }
                     .padding(32)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -80,6 +81,7 @@ struct WordModeView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
                     Button {
+                        HapticManager.impact(.medium)
                         toggleFavorite()
                     } label: {
                         Image(systemName: currentSuggestion?.isFavorite == true ? "heart.fill" : "heart")
@@ -91,14 +93,17 @@ struct WordModeView: View {
                     }
                     .disabled(currentSuggestion == nil)
                     .opacity(currentSuggestion == nil ? 0.5 : 1)
+                    .accessibilityIdentifier("favorite_button")
                 }
 
                 Spacer()
 
                 Button("Generate") {
+                    HapticManager.impact(.light)
                     generateSuggestion()
                 }
                 .buttonStyle(.primaryPill)
+                .accessibilityIdentifier("generate_button")
             }
             .padding(.vertical, 32)
         }
@@ -121,7 +126,17 @@ struct WordModeView: View {
             suggestionQueues[categoryKey] = filteredSuggestions.shuffled()
         }
 
-        currentSuggestion = suggestionQueues[categoryKey]?.popLast()
+        var nextSuggestion = suggestionQueues[categoryKey]?.popLast()
+
+        if nextSuggestion?.id == currentSuggestion?.id {
+            if suggestionQueues[categoryKey, default: []].isEmpty {
+                suggestionQueues[categoryKey] = filteredSuggestions.filter { $0.id != currentSuggestion?.id }.shuffled()
+            }
+
+            nextSuggestion = suggestionQueues[categoryKey]?.popLast() ?? nextSuggestion
+        }
+
+        currentSuggestion = nextSuggestion
     }
 
     private func toggleFavorite() {
@@ -132,25 +147,6 @@ struct WordModeView: View {
             try modelContext.save()
         } catch {
             assertionFailure("Failed to update favorite: \(error)")
-        }
-    }
-}
-
-private extension Category {
-    var displayName: String {
-        switch self {
-        case .question:
-            "Question"
-        case .object:
-            "Object"
-        case .location:
-            "Location"
-        case .profession:
-            "Profession"
-        case .emotion:
-            "Emotion"
-        case .dialogueLine:
-            "Dialogue"
         }
     }
 }

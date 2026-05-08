@@ -30,7 +30,7 @@ struct FavoritesView: View {
                 .padding(32)
             } else {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 18) {
+                    LazyVStack(alignment: .leading, spacing: 18) {
                         Text("FAVORITES")
                             .font(.sectionLabel)
                             .tracking(1.5)

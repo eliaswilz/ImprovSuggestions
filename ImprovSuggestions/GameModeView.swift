@@ -63,9 +63,11 @@ struct GameModeView: View {
                 Spacer()
 
                 Button(selectedGame == .firstLineLastLine ? "Regenerate" : "Regenerate") {
+                    HapticManager.impact(.light)
                     regenerateCurrentGame()
                 }
                 .buttonStyle(.primaryPill)
+                .accessibilityIdentifier("regenerate_button")
             }
             .padding(.vertical, 32)
         }
@@ -101,6 +103,7 @@ struct GameModeView: View {
                             .font(.readableBody)
                             .foregroundStyle(Color.theme.offWhite)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityIdentifier("emotion_text_\(index + 1)")
                     }
                     .padding(20)
                     .background(Color.theme.cardBackground)
@@ -119,10 +122,13 @@ struct GameModeView: View {
                 .foregroundStyle(Color.theme.offWhite.opacity(0.55))
 
             Text(text)
-                .font(.suggestionTitle)
+                .font(.title.weight(.bold))
                 .foregroundStyle(Color.theme.offWhite)
                 .multilineTextAlignment(.leading)
-                .minimumScaleFactor(0.65)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .minimumScaleFactor(0.5)
+                .accessibilityIdentifier(title.hasPrefix("First") ? "first_line_text" : "last_line_text")
         }
         .padding(32)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -137,7 +143,17 @@ struct GameModeView: View {
                 dialogueLineQueue = dialogueLines.shuffled()
             }
 
-            dialogueLine = dialogueLineQueue.popLast()
+            var nextDialogueLine = dialogueLineQueue.popLast()
+
+            if nextDialogueLine?.id == dialogueLine?.id {
+                if dialogueLineQueue.isEmpty {
+                    dialogueLineQueue = dialogueLines.filter { $0.id != dialogueLine?.id }.shuffled()
+                }
+
+                nextDialogueLine = dialogueLineQueue.popLast() ?? nextDialogueLine
+            }
+
+            dialogueLine = nextDialogueLine
         case .changingEmotions:
             emotions = Array(emotionSuggestions.shuffled().prefix(15))
         }
