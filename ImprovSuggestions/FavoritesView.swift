@@ -38,7 +38,7 @@ struct FavoritesView: View {
 
                         ForEach(favorites) { favorite in
                             VStack(alignment: .leading, spacing: 12) {
-                                Text(favorite.categoryEnum.rawValue.uppercased())
+                                Text(favorite.category.rawValue.uppercased())
                                     .font(.sectionLabel)
                                     .tracking(1.5)
                                     .foregroundStyle(Color.theme.offWhite.opacity(0.55))

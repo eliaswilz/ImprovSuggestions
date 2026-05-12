@@ -5,19 +5,15 @@ struct WordModeView: View {
     private let selectableCategories: [Category] = [.object, .location, .profession, .emotion]
 
     @Environment(\.modelContext) private var modelContext
-    @Query(filter: #Predicate<SuggestionItem> { suggestion in
-        suggestion.category == "object" ||
-        suggestion.category == "location" ||
-        suggestion.category == "profession" ||
-        suggestion.category == "emotion"
-    }) private var suggestions: [SuggestionItem]
+    @EnvironmentObject private var persistenceAlertManager: PersistenceAlertManager
+    @Query private var suggestions: [SuggestionItem]
 
     @State private var selectedCategory: Category = .object
     @State private var currentSuggestion: SuggestionItem?
-    @State private var suggestionQueues: [String: [SuggestionItem]] = [:]
+    @State private var suggestionQueueManagers: [String: SuggestionQueueManager] = [:]
 
     private var filteredSuggestions: [SuggestionItem] {
-        suggestions.filter { $0.category == selectedCategory.rawValue }
+        suggestions.filter { $0.matchesCategory(selectedCategory) }
     }
 
     var body: some View {
@@ -37,7 +33,6 @@ struct WordModeView: View {
                             Button(category.displayName) {
                                 withAnimation(.spring()) {
                                     selectedCategory = category
-                                    suggestionQueues[category.rawValue] = []
                                     generateSuggestion()
                                 }
                             }
@@ -113,7 +108,7 @@ struct WordModeView: View {
             }
         }
         .onChange(of: suggestions) { _, _ in
-            if currentSuggestion == nil || currentSuggestion?.category != selectedCategory.rawValue {
+            if currentSuggestion == nil || currentSuggestion?.category != selectedCategory {
                 generateSuggestion()
             }
         }
@@ -121,22 +116,10 @@ struct WordModeView: View {
 
     private func generateSuggestion() {
         let categoryKey = selectedCategory.rawValue
+        var queueManager = suggestionQueueManagers[categoryKey] ?? SuggestionQueueManager()
 
-        if suggestionQueues[categoryKey, default: []].isEmpty {
-            suggestionQueues[categoryKey] = filteredSuggestions.shuffled()
-        }
-
-        var nextSuggestion = suggestionQueues[categoryKey]?.popLast()
-
-        if nextSuggestion?.id == currentSuggestion?.id {
-            if suggestionQueues[categoryKey, default: []].isEmpty {
-                suggestionQueues[categoryKey] = filteredSuggestions.filter { $0.id != currentSuggestion?.id }.shuffled()
-            }
-
-            nextSuggestion = suggestionQueues[categoryKey]?.popLast() ?? nextSuggestion
-        }
-
-        currentSuggestion = nextSuggestion
+        currentSuggestion = queueManager.next(from: filteredSuggestions)
+        suggestionQueueManagers[categoryKey] = queueManager
     }
 
     private func toggleFavorite() {
@@ -146,12 +129,17 @@ struct WordModeView: View {
         do {
             try modelContext.save()
         } catch {
-            assertionFailure("Failed to update favorite: \(error)")
+            currentSuggestion.isFavorite.toggle()
+            persistenceAlertManager.showSaveError(
+                action: "Your favorite change could not be saved.",
+                error: error
+            )
         }
     }
 }
 
 #Preview {
     WordModeView()
+        .environmentObject(PersistenceAlertManager.shared)
         .modelContainer(for: SuggestionItem.self, inMemory: true)
 }

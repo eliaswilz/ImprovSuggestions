@@ -60,22 +60,31 @@ final class DataManager {
 
     private init() { }
 
-    func preloadSuggestionsIfNeeded(modelContext: ModelContext) {
+    func preloadSuggestionsIfNeeded(modelContext: ModelContext) throws {
         let descriptor = FetchDescriptor<SuggestionItem>()
 
-        do {
-            try removeStalePlaceholderSuggestions(modelContext: modelContext)
+        try removeStalePlaceholderSuggestions(modelContext: modelContext)
 
-            let existingCount = try modelContext.fetchCount(descriptor)
-            guard existingCount == 0 else { return }
+        let existingSuggestions = try modelContext.fetch(descriptor)
+        let brokenBuiltInSuggestions = existingSuggestions.filter { !$0.isCustom && $0.isMissingStoredCategory }
 
-            for suggestion in Self.initialSuggestions {
-                modelContext.insert(suggestion)
-            }
+        for suggestion in brokenBuiltInSuggestions {
+            modelContext.delete(suggestion)
+        }
 
+        let existingSeedContents = Set(
+            existingSuggestions
+                .filter { !$0.isMissingStoredCategory }
+                .map(\.content)
+        )
+        let missingInitialSuggestions = Self.initialSuggestions.filter { !existingSeedContents.contains($0.content) }
+
+        for suggestion in missingInitialSuggestions {
+            modelContext.insert(suggestion)
+        }
+
+        if !brokenBuiltInSuggestions.isEmpty || !missingInitialSuggestions.isEmpty {
             try modelContext.save()
-        } catch {
-            assertionFailure("Failed to preload suggestions: \(error)")
         }
     }
 

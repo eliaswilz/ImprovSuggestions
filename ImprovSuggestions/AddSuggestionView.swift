@@ -4,6 +4,7 @@ import SwiftUI
 struct AddSuggestionView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var persistenceAlertManager: PersistenceAlertManager
 
     @State private var content = ""
     @State private var secondaryContent = ""
@@ -69,12 +70,17 @@ struct AddSuggestionView: View {
             try modelContext.save()
             dismiss()
         } catch {
-            assertionFailure("Failed to save custom suggestion: \(error)")
+            modelContext.delete(suggestion)
+            persistenceAlertManager.showSaveError(
+                action: "Your custom suggestion could not be saved.",
+                error: error
+            )
         }
     }
 }
 
 #Preview {
     AddSuggestionView()
+        .environmentObject(PersistenceAlertManager.shared)
         .modelContainer(for: SuggestionItem.self, inMemory: true)
 }

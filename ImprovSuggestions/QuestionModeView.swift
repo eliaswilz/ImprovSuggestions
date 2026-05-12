@@ -2,13 +2,15 @@ import SwiftData
 import SwiftUI
 
 struct QuestionModeView: View {
-    @Query(filter: #Predicate<SuggestionItem> { suggestion in
-        suggestion.category == "question"
-    }) private var questions: [SuggestionItem]
+    @Query private var suggestions: [SuggestionItem]
 
     @State private var currentQuestion: SuggestionItem?
     @State private var isShowingAudienceResponse = false
-    @State private var questionQueue: [SuggestionItem] = []
+    @State private var questionQueueManager = SuggestionQueueManager()
+
+    private var questions: [SuggestionItem] {
+        suggestions.filter { $0.matchesCategory(.question) }
+    }
 
     var body: some View {
         ZStack {
@@ -82,21 +84,7 @@ struct QuestionModeView: View {
     }
 
     private func showRandomQuestion() {
-        if questionQueue.isEmpty {
-            questionQueue = questions.shuffled()
-        }
-
-        var nextQuestion = questionQueue.popLast()
-
-        if nextQuestion?.id == currentQuestion?.id {
-            if questionQueue.isEmpty {
-                questionQueue = questions.filter { $0.id != currentQuestion?.id }.shuffled()
-            }
-
-            nextQuestion = questionQueue.popLast() ?? nextQuestion
-        }
-
-        currentQuestion = nextQuestion
+        currentQuestion = questionQueueManager.next(from: questions)
         isShowingAudienceResponse = false
     }
 }

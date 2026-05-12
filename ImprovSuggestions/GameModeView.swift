@@ -9,22 +9,19 @@ struct GameModeView: View {
         var id: String { rawValue }
     }
 
-    @Query(filter: #Predicate<SuggestionItem> { suggestion in
-        suggestion.category == "dialogueLine" ||
-        suggestion.category == "emotion"
-    }) private var suggestions: [SuggestionItem]
+    @Query private var suggestions: [SuggestionItem]
 
     @State private var selectedGame: GameMode = .firstLineLastLine
     @State private var dialogueLine: SuggestionItem?
     @State private var emotions: [SuggestionItem] = []
-    @State private var dialogueLineQueue: [SuggestionItem] = []
+    @State private var dialogueLineQueueManager = SuggestionQueueManager()
 
     private var dialogueLines: [SuggestionItem] {
-        suggestions.filter { $0.category == Category.dialogueLine.rawValue }
+        suggestions.filter { $0.matchesCategory(.dialogueLine) }
     }
 
     private var emotionSuggestions: [SuggestionItem] {
-        suggestions.filter { $0.category == Category.emotion.rawValue }
+        suggestions.filter { $0.matchesCategory(.emotion) }
     }
 
     var body: some View {
@@ -139,21 +136,7 @@ struct GameModeView: View {
     private func regenerateCurrentGame() {
         switch selectedGame {
         case .firstLineLastLine:
-            if dialogueLineQueue.isEmpty {
-                dialogueLineQueue = dialogueLines.shuffled()
-            }
-
-            var nextDialogueLine = dialogueLineQueue.popLast()
-
-            if nextDialogueLine?.id == dialogueLine?.id {
-                if dialogueLineQueue.isEmpty {
-                    dialogueLineQueue = dialogueLines.filter { $0.id != dialogueLine?.id }.shuffled()
-                }
-
-                nextDialogueLine = dialogueLineQueue.popLast() ?? nextDialogueLine
-            }
-
-            dialogueLine = nextDialogueLine
+            dialogueLine = dialogueLineQueueManager.next(from: dialogueLines)
         case .changingEmotions:
             emotions = Array(emotionSuggestions.shuffled().prefix(15))
         }
