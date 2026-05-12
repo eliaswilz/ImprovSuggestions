@@ -3,9 +3,11 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var persistenceAlertManager: PersistenceAlertManager
     @Query private var suggestions: [SuggestionItem]
 
     @State private var isShowingHowToPlay = false
+    @State private var isShowingResetConfirmation = false
 
     var body: some View {
         ZStack {
@@ -46,7 +48,7 @@ struct SettingsView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
                 Button("Reset App Data") {
-                    resetAppData()
+                    isShowingResetConfirmation = true
                 }
                 .buttonStyle(.primaryPill)
                 .accessibilityIdentifier("reset_app_data_button")
@@ -57,6 +59,17 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $isShowingHowToPlay) {
             HowToPlayView()
+        }
+        .confirmationDialog(
+            "This will delete all custom suggestions and clear all favorites.",
+            isPresented: $isShowingResetConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Reset App Data", role: .destructive) {
+                resetAppData()
+            }
+
+            Button("Cancel", role: .cancel) { }
         }
     }
 
@@ -72,7 +85,11 @@ struct SettingsView: View {
         do {
             try modelContext.save()
         } catch {
-            assertionFailure("Failed to reset app data: \(error)")
+            modelContext.rollback()
+            persistenceAlertManager.showSaveError(
+                action: "Your app data could not be reset.",
+                error: error
+            )
         }
     }
 }
@@ -139,5 +156,6 @@ private struct HowToPlayView: View {
 
 #Preview {
     SettingsView()
+        .environmentObject(PersistenceAlertManager.shared)
         .modelContainer(for: SuggestionItem.self, inMemory: true)
 }

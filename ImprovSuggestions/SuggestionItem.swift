@@ -34,12 +34,21 @@ final class SuggestionItem {
     @Attribute(.unique) var id: UUID
     var content: String
     var secondaryContent: String?
-    var category: String
+    private var storedCategory: Category?
     var isFavorite: Bool
     var isCustom: Bool
 
-    var categoryEnum: Category {
-        Category(rawValue: category) ?? .question
+    var category: Category {
+        get { storedCategory ?? .question }
+        set { storedCategory = newValue }
+    }
+
+    var isMissingStoredCategory: Bool {
+        storedCategory == nil
+    }
+
+    func matchesCategory(_ category: Category) -> Bool {
+        storedCategory == category
     }
 
     init(
@@ -53,7 +62,7 @@ final class SuggestionItem {
         self.id = id
         self.content = content
         self.secondaryContent = secondaryContent
-        self.category = category.rawValue
+        self.storedCategory = category
         self.isFavorite = isFavorite
         self.isCustom = isCustom
     }
