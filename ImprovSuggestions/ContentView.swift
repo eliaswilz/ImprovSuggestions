@@ -13,8 +13,8 @@ struct ContentView: View {
     init() {
         let backgroundColor = UIColor(red: 0.102, green: 0.102, blue: 0.102, alpha: 1.0)
         let borderColor = UIColor(red: 0.165, green: 0.165, blue: 0.165, alpha: 1.0)
-        let activeColor = UIColor(red: 0.000, green: 0.412, blue: 0.616, alpha: 1.0)
-        let inactiveColor = UIColor(red: 0.333, green: 0.333, blue: 0.333, alpha: 1.0)
+        let activeColor = UIColor(red: 0.467, green: 0.529, blue: 0.765, alpha: 1.0)
+        let inactiveColor = UIColor(red: 0.557, green: 0.584, blue: 0.463, alpha: 1.0)
         let labelFont = UIFont.systemFont(ofSize: 11, weight: .medium)
         let appearance = UITabBarAppearance()
 
@@ -73,7 +73,7 @@ struct ContentView: View {
                             .accessibilityIdentifier("settings_tab")
                     }
             }
-            .tint(Color.theme.brightBlue)
+            .tint(Color.theme.accentSoftBlue)
             .toolbarBackground(Color.theme.darkBackground, for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
             .background(Color.theme.darkBackground)

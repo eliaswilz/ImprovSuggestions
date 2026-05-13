@@ -2,14 +2,14 @@ import SwiftUI
 
 struct Theme {
     let darkBackground = Color(red: 0.102, green: 0.102, blue: 0.102)
-    let deepBlue = Color(red: 0.000, green: 0.349, blue: 0.471)
-    let brightBlue = Color(red: 0.000, green: 0.412, blue: 0.616)
-    let teal = Color(red: 0.000, green: 0.435, blue: 0.416)
-    let darkRed = Color(red: 0.545, green: 0.000, blue: 0.000)
-    let brightRed = Color(red: 0.706, green: 0.000, blue: 0.122)
-    let offWhite = Color(red: 0.961, green: 0.949, blue: 0.925)
-    let cardBackground = Color(red: 0.141, green: 0.141, blue: 0.141)
-    let headerCardBackground = Color(red: 0.118, green: 0.165, blue: 0.188)
+    let offWhite = Color(red: 1.000, green: 1.000, blue: 1.000)
+    let accentPurple = Color(red: 0.529, green: 0.420, blue: 0.502)
+    let accentSoftBlue = Color(red: 0.467, green: 0.529, blue: 0.765)
+    let accentOlive = Color(red: 0.463, green: 0.494, blue: 0.306)
+    let accentSage = Color(red: 0.557, green: 0.584, blue: 0.463)
+    let accentDeepBlue = Color(red: 0.361, green: 0.400, blue: 0.608)
+    let cardBackground = Color(red: 0.145, green: 0.145, blue: 0.145)
+    let headerCardBackground = Color(red: 0.165, green: 0.165, blue: 0.165)
 }
 
 extension Color {
@@ -31,8 +31,8 @@ struct PrimaryPillButtonStyle: ButtonStyle {
             .tracking(0.8)
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity, minHeight: 56, maxHeight: 56)
-            .background(Color.theme.brightBlue)
-            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .background(Color.theme.accentDeepBlue)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
             .animation(.spring(response: 0.25, dampingFraction: 0.65), value: configuration.isPressed)
     }
@@ -53,7 +53,7 @@ struct ModeHeaderCard: View {
             Text(title.uppercased())
                 .font(.caption.weight(.semibold))
                 .tracking(1.5)
-                .foregroundStyle(Color.theme.brightBlue)
+                .foregroundStyle(Color.theme.accentSoftBlue)
 
             Text(subtitle)
                 .font(.subheadline)
@@ -63,7 +63,7 @@ struct ModeHeaderCard: View {
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.theme.headerCardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .padding(.horizontal, 16)
     }
 }

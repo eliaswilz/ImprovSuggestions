@@ -21,7 +21,8 @@ struct WordModeView: View {
             Color.theme.darkBackground
                 .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 32) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 32) {
                 ModeHeaderCard(
                     title: "Word Mode",
                     subtitle: "Choose a category and generate a fresh prompt"
@@ -42,7 +43,7 @@ struct WordModeView: View {
                             .padding(.vertical, 10)
                             .background {
                                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .fill(selectedCategory == category ? Color.theme.deepBlue : Color.clear)
+                                    .fill(selectedCategory == category ? Color.theme.accentDeepBlue : Color.clear)
                             }
                             .overlay {
                                 RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -53,8 +54,6 @@ struct WordModeView: View {
                     }
                     .padding(.horizontal, 16)
                 }
-
-                Spacer()
 
                 HStack(alignment: .top, spacing: 16) {
                     VStack(alignment: .leading, spacing: 16) {
@@ -67,11 +66,11 @@ struct WordModeView: View {
                             .font(.suggestionTitle)
                             .foregroundStyle(Color.theme.offWhite)
                             .multilineTextAlignment(.leading)
-                            .minimumScaleFactor(0.65)
+                            .minimumScaleFactor(0.5)
                             .accessibilityIdentifier("suggestion_text")
                     }
                     .padding(32)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
                     .background(Color.theme.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
@@ -81,9 +80,9 @@ struct WordModeView: View {
                     } label: {
                         Image(systemName: currentSuggestion?.isFavorite == true ? "heart.fill" : "heart")
                             .font(.system(size: 34, weight: .semibold))
-                            .foregroundStyle(currentSuggestion?.isFavorite == true ? Color.theme.brightRed : Color.theme.offWhite)
+                            .foregroundStyle(currentSuggestion?.isFavorite == true ? Color.theme.accentPurple : Color.theme.offWhite)
                             .frame(width: 58, height: 58)
-                            .background(Color.theme.darkRed.opacity(0.35))
+                            .background(Color.theme.accentPurple.opacity(0.35))
                             .clipShape(Circle())
                     }
                     .disabled(currentSuggestion == nil)
@@ -91,16 +90,16 @@ struct WordModeView: View {
                     .accessibilityIdentifier("favorite_button")
                 }
 
-                Spacer()
-
                 Button("Generate") {
                     HapticManager.impact(.light)
                     generateSuggestion()
                 }
                 .buttonStyle(.primaryPill)
                 .accessibilityIdentifier("generate_button")
+                }
+                .padding(.horizontal, 32)
+                .padding(.vertical, 32)
             }
-            .padding(.vertical, 32)
         }
         .onAppear {
             if currentSuggestion == nil {

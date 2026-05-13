@@ -29,7 +29,8 @@ struct GameModeView: View {
             Color.theme.darkBackground
                 .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 32) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 32) {
                 ModeHeaderCard(
                     title: "Game Mode",
                     subtitle: "Select a structure and regenerate playable ideas"
@@ -45,7 +46,7 @@ struct GameModeView: View {
                 .tint(Color.theme.offWhite)
                 .padding(.horizontal, 18)
                 .padding(.vertical, 12)
-                .background(Color.theme.deepBlue)
+                .background(Color.theme.accentDeepBlue)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                 Group {
@@ -57,16 +58,16 @@ struct GameModeView: View {
                     }
                 }
 
-                Spacer()
-
                 Button(selectedGame == .firstLineLastLine ? "Regenerate" : "Regenerate") {
                     HapticManager.impact(.light)
                     regenerateCurrentGame()
                 }
                 .buttonStyle(.primaryPill)
                 .accessibilityIdentifier("regenerate_button")
+                }
+                .padding(.horizontal, 32)
+                .padding(.vertical, 32)
             }
-            .padding(.vertical, 32)
         }
         .onAppear {
             regenerateCurrentGame()
@@ -128,7 +129,7 @@ struct GameModeView: View {
                 .accessibilityIdentifier(title.hasPrefix("First") ? "first_line_text" : "last_line_text")
         }
         .padding(32)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(Color.theme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }

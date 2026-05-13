@@ -14,48 +14,48 @@ struct SettingsView: View {
             Color.theme.darkBackground
                 .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("SETTINGS")
-                        .font(.sectionLabel)
-                        .tracking(1.5)
-                        .foregroundStyle(Color.theme.offWhite.opacity(0.65))
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("SETTINGS")
+                            .font(.sectionLabel)
+                            .tracking(1.5)
+                            .foregroundStyle(Color.theme.offWhite.opacity(0.65))
 
-                    Text("Customize and manage your suggestion library.")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.gray)
-                }
-                .padding(32)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.theme.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        Text("Customize and manage your suggestion library.")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.gray)
+                    }
+                    .padding(32)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.theme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("HOW TO PLAY")
-                        .font(.sectionLabel)
-                        .tracking(1.5)
-                        .foregroundStyle(Color.theme.brightBlue)
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("HOW TO PLAY")
+                            .font(.sectionLabel)
+                            .tracking(1.5)
+                            .foregroundStyle(Color.theme.accentSoftBlue)
 
-                    Button("Open Guide") {
-                        isShowingHowToPlay = true
+                        Button("Open Guide") {
+                            isShowingHowToPlay = true
+                        }
+                        .buttonStyle(.primaryPill)
+                        .accessibilityIdentifier("how_to_play_button")
+                    }
+                    .padding(32)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.theme.headerCardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+
+                    Button("Reset App Data") {
+                        isShowingResetConfirmation = true
                     }
                     .buttonStyle(.primaryPill)
-                    .accessibilityIdentifier("how_to_play_button")
+                    .accessibilityIdentifier("reset_app_data_button")
                 }
                 .padding(32)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.theme.headerCardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-
-                Button("Reset App Data") {
-                    isShowingResetConfirmation = true
-                }
-                .buttonStyle(.primaryPill)
-                .accessibilityIdentifier("reset_app_data_button")
-
-                Spacer()
             }
-            .padding(32)
         }
         .sheet(isPresented: $isShowingHowToPlay) {
             HowToPlayView()
@@ -140,7 +140,7 @@ private struct HowToPlayView: View {
             Text(title.uppercased())
                 .font(.sectionLabel)
                 .tracking(1.5)
-                .foregroundStyle(Color.theme.brightBlue)
+                .foregroundStyle(Color.theme.accentSoftBlue)
 
             Text(text)
                 .font(.body)
