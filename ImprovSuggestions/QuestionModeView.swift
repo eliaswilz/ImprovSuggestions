@@ -17,59 +17,60 @@ struct QuestionModeView: View {
             Color.theme.darkBackground
                 .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 32) {
-                ModeHeaderCard(
-                    title: "Question Mode",
-                    subtitle: "Tap to generate a new audience question"
-                )
+            ScrollView {
+                VStack(alignment: .leading, spacing: 32) {
+                    ModeHeaderCard(
+                        title: "Question Mode",
+                        subtitle: "Tap to generate a new audience question"
+                    )
 
-                VStack(alignment: .leading, spacing: 24) {
-                    Text(currentQuestion?.content ?? "No questions available")
-                        .font(.suggestionTitle)
-                        .foregroundStyle(Color.theme.offWhite)
-                        .multilineTextAlignment(.leading)
-                        .minimumScaleFactor(0.65)
-                        .accessibilityIdentifier("question_text")
+                    VStack(alignment: .leading, spacing: 24) {
+                        Text(currentQuestion?.content ?? "No questions available")
+                            .font(.suggestionTitle)
+                            .foregroundStyle(Color.theme.offWhite)
+                            .multilineTextAlignment(.leading)
+                            .minimumScaleFactor(0.5)
+                            .accessibilityIdentifier("question_text")
 
-                    if isShowingAudienceResponse, let secondaryContent = currentQuestion?.secondaryContent {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("AUDIENCE RESPONSE")
-                                .font(.sectionLabel)
-                                .tracking(1.5)
-                                .foregroundStyle(Color.theme.offWhite.opacity(0.55))
+                        if isShowingAudienceResponse, let secondaryContent = currentQuestion?.secondaryContent {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("AUDIENCE RESPONSE")
+                                    .font(.sectionLabel)
+                                    .tracking(1.5)
+                                    .foregroundStyle(Color.theme.offWhite.opacity(0.55))
 
-                            Text(secondaryContent)
-                                .font(.title2.weight(.semibold))
-                                .foregroundStyle(Color.theme.offWhite)
-                                .multilineTextAlignment(.leading)
+                                Text(secondaryContent)
+                                    .font(.title2.weight(.semibold))
+                                    .foregroundStyle(Color.theme.offWhite)
+                                    .multilineTextAlignment(.leading)
+                            }
                         }
                     }
-                }
-                .padding(32)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .background(Color.theme.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .padding(32)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .background(Color.theme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
-                Spacer()
+                    VStack(spacing: 16) {
+                        Button("Next Question") {
+                            HapticManager.impact(.light)
+                            showRandomQuestion()
+                        }
+                        .buttonStyle(.primaryPill)
+                        .accessibilityIdentifier("next_question_button")
 
-                VStack(spacing: 16) {
-                    Button("Next Question") {
-                        HapticManager.impact(.light)
-                        showRandomQuestion()
+                        Button("Simulate Audience Response") {
+                            isShowingAudienceResponse = true
+                        }
+                        .buttonStyle(.primaryPill)
+                        .accessibilityIdentifier("simulate_audience_response_button")
+                        .disabled(currentQuestion?.secondaryContent == nil)
+                        .opacity(currentQuestion?.secondaryContent == nil ? 0.5 : 1)
                     }
-                    .buttonStyle(.primaryPill)
-                    .accessibilityIdentifier("next_question_button")
-
-                    Button("Simulate Audience Response") {
-                        isShowingAudienceResponse = true
-                    }
-                    .buttonStyle(.primaryPill)
-                    .accessibilityIdentifier("simulate_audience_response_button")
-                    .disabled(currentQuestion?.secondaryContent == nil)
-                    .opacity(currentQuestion?.secondaryContent == nil ? 0.5 : 1)
                 }
+                .padding(.horizontal, 32)
+                .padding(.vertical, 32)
             }
-            .padding(.vertical, 32)
         }
         .onAppear {
             if currentQuestion == nil {
