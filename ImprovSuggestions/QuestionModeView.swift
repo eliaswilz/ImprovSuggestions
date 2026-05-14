@@ -37,7 +37,7 @@ struct QuestionModeView: View {
                                 Text("AUDIENCE RESPONSE")
                                     .font(.sectionLabel)
                                     .tracking(1.5)
-                                    .foregroundStyle(Color.theme.offWhite.opacity(0.55))
+                                    .foregroundStyle(Color.theme.accentSage)
 
                                 Text(secondaryContent)
                                     .font(.title2.weight(.semibold))
@@ -49,7 +49,7 @@ struct QuestionModeView: View {
                     .padding(32)
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                     .background(Color.theme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                     VStack(spacing: 16) {
                         Button("Next Question") {

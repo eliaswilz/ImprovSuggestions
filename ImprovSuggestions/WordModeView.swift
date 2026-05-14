@@ -39,15 +39,12 @@ struct WordModeView: View {
                             }
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(selectedCategory == category ? .white : Color.gray)
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 10)
-                            .background {
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 8)
+                            .overlay(alignment: .bottom) {
+                                Rectangle()
                                     .fill(selectedCategory == category ? Color.theme.accentDeepBlue : Color.clear)
-                            }
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .stroke(selectedCategory == category ? Color.clear : Color(red: 0.2, green: 0.2, blue: 0.2), lineWidth: 1)
+                                    .frame(height: 2)
                             }
                             .animation(.spring(), value: selectedCategory)
                         }
@@ -55,35 +52,33 @@ struct WordModeView: View {
                     .padding(.horizontal, 16)
                 }
 
-                HStack(alignment: .top, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(selectedCategory.displayName.uppercased())
-                            .font(.sectionLabel)
-                            .tracking(1.5)
-                            .foregroundStyle(Color.theme.offWhite.opacity(0.55))
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(selectedCategory.displayName.uppercased())
+                        .font(.sectionLabel)
+                        .tracking(1.5)
+                        .foregroundStyle(Color.theme.accentSage)
 
-                        Text(currentSuggestion?.content ?? "Tap Generate")
-                            .font(.suggestionTitle)
-                            .foregroundStyle(Color.theme.offWhite)
-                            .multilineTextAlignment(.leading)
-                            .minimumScaleFactor(0.5)
-                            .accessibilityIdentifier("suggestion_text")
-                    }
-                    .padding(32)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .background(Color.theme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-
+                    Text(currentSuggestion?.content ?? "Tap Generate")
+                        .font(.suggestionTitle)
+                        .foregroundStyle(Color.theme.offWhite)
+                        .multilineTextAlignment(.leading)
+                        .minimumScaleFactor(0.5)
+                        .accessibilityIdentifier("suggestion_text")
+                }
+                .padding(32)
+                .padding(.trailing, 28)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .background(Color.theme.cardBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay(alignment: .topTrailing) {
                     Button {
                         HapticManager.impact(.medium)
                         toggleFavorite()
                     } label: {
                         Image(systemName: currentSuggestion?.isFavorite == true ? "heart.fill" : "heart")
-                            .font(.system(size: 34, weight: .semibold))
-                            .foregroundStyle(currentSuggestion?.isFavorite == true ? Color.theme.accentPurple : Color.theme.offWhite)
-                            .frame(width: 58, height: 58)
-                            .background(Color.theme.accentPurple.opacity(0.35))
-                            .clipShape(Circle())
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(currentSuggestion?.isFavorite == true ? Color.theme.accentPurple : Color.gray.opacity(0.65))
+                            .padding(16)
                     }
                     .disabled(currentSuggestion == nil)
                     .opacity(currentSuggestion == nil ? 0.5 : 1)
