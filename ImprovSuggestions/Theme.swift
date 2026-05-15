@@ -17,10 +17,10 @@ extension Color {
 }
 
 extension Font {
-    static let readableTitle = Font.system(size: 34, weight: .bold, design: .rounded)
-    static let readableHeadline = Font.system(size: 24, weight: .semibold, design: .rounded)
-    static let readableBody = Font.system(size: 20, weight: .regular, design: .rounded)
-    static let suggestionTitle = Font.largeTitle.weight(.bold)
+    static let readableTitle = Font.system(size: 34, weight: .bold, design: .default)
+    static let readableHeadline = Font.system(size: 24, weight: .semibold, design: .default)
+    static let readableBody = Font.system(size: 20, weight: .regular, design: .default)
+    static let suggestionTitle = Font.system(size: 34, weight: .bold, design: .default)
     static let sectionLabel = Font.caption.weight(.semibold)
 }
 
@@ -53,7 +53,7 @@ struct ModeHeaderCard: View {
             Text(title.uppercased())
                 .font(.caption.weight(.semibold))
                 .tracking(1.5)
-                .foregroundStyle(Color.theme.accentSoftBlue)
+                .foregroundStyle(Color.theme.accentSage)
 
             Text(subtitle)
                 .font(.subheadline)

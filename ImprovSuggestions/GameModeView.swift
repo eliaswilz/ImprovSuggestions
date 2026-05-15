@@ -31,23 +31,28 @@ struct GameModeView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 32) {
-                ModeHeaderCard(
-                    title: "Game Mode",
-                    subtitle: "Select a structure and regenerate playable ideas"
-                )
-
-                Picker("Game", selection: $selectedGame) {
-                    ForEach(GameMode.allCases) { game in
-                        Text(game.rawValue).tag(game)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(GameMode.allCases) { game in
+                            Button(game.rawValue) {
+                                withAnimation(.spring()) {
+                                    selectedGame = game
+                                }
+                            }
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(selectedGame == game ? .white : Color.gray)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 8)
+                            .overlay(alignment: .bottom) {
+                                Rectangle()
+                                    .fill(selectedGame == game ? Color.theme.accentDeepBlue : Color.clear)
+                                    .frame(height: 2)
+                            }
+                            .animation(.spring(), value: selectedGame)
+                        }
                     }
+                    .padding(.horizontal, 16)
                 }
-                .pickerStyle(.menu)
-                .font(.readableHeadline)
-                .tint(Color.theme.offWhite)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 12)
-                .background(Color.theme.accentDeepBlue)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                 Group {
                     switch selectedGame {
@@ -105,7 +110,7 @@ struct GameModeView: View {
                     }
                     .padding(20)
                     .background(Color.theme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
             }
             .padding(.vertical, 32)
@@ -117,7 +122,7 @@ struct GameModeView: View {
             Text(title.uppercased())
                 .font(.sectionLabel)
                 .tracking(1.5)
-                .foregroundStyle(Color.theme.offWhite.opacity(0.55))
+                .foregroundStyle(Color.theme.accentSage)
 
             Text(text)
                 .font(.title.weight(.bold))
@@ -131,7 +136,7 @@ struct GameModeView: View {
         .padding(32)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(Color.theme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
     private func regenerateCurrentGame() {

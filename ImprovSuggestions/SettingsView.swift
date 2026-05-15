@@ -29,13 +29,13 @@ struct SettingsView: View {
                     .padding(32)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.theme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                     VStack(alignment: .leading, spacing: 16) {
                         Text("HOW TO PLAY")
                             .font(.sectionLabel)
                             .tracking(1.5)
-                            .foregroundStyle(Color.theme.accentSoftBlue)
+                            .foregroundStyle(Color.theme.accentSage)
 
                         Button("Open Guide") {
                             isShowingHowToPlay = true
@@ -46,7 +46,7 @@ struct SettingsView: View {
                     .padding(32)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.theme.headerCardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                     Button("Reset App Data") {
                         isShowingResetConfirmation = true
@@ -140,7 +140,7 @@ private struct HowToPlayView: View {
             Text(title.uppercased())
                 .font(.sectionLabel)
                 .tracking(1.5)
-                .foregroundStyle(Color.theme.accentSoftBlue)
+                .foregroundStyle(Color.theme.accentSage)
 
             Text(text)
                 .font(.body)
@@ -150,7 +150,7 @@ private struct HowToPlayView: View {
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.theme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 

@@ -16,7 +16,7 @@ struct FavoritesView: View {
                     Text("FAVORITES")
                         .font(.sectionLabel)
                         .tracking(1.5)
-                        .foregroundStyle(Color.theme.offWhite.opacity(0.55))
+                        .foregroundStyle(Color.theme.accentSage)
 
                     Text("No favorites yet")
                         .font(.suggestionTitle)
@@ -26,7 +26,7 @@ struct FavoritesView: View {
                 .padding(32)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.theme.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .padding(32)
             } else {
                 ScrollView {
@@ -41,13 +41,13 @@ struct FavoritesView: View {
                                 Text(favorite.category.rawValue.uppercased())
                                     .font(.sectionLabel)
                                     .tracking(1.5)
-                                    .foregroundStyle(Color.theme.offWhite.opacity(0.55))
+                                    .foregroundStyle(Color.theme.accentSage)
 
                                 Text(favorite.content)
                                     .font(.suggestionTitle)
                                     .foregroundStyle(Color.theme.offWhite)
                                     .multilineTextAlignment(.leading)
-                                    .minimumScaleFactor(0.65)
+                                    .minimumScaleFactor(0.5)
 
                                 if let secondaryContent = favorite.secondaryContent {
                                     Text(secondaryContent)
@@ -59,7 +59,7 @@ struct FavoritesView: View {
                             .padding(32)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color.theme.cardBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         }
                     }
                     .padding(32)
