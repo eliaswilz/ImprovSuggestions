@@ -8,6 +8,7 @@ struct SettingsView: View {
 
     @State private var isShowingHowToPlay = false
     @State private var isShowingResetConfirmation = false
+    @State private var isShowingAddSuggestion = false
 
     var body: some View {
         ZStack {
@@ -30,6 +31,12 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.theme.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+                    Button("Add Suggestion") {
+                        isShowingAddSuggestion = true
+                    }
+                    .buttonStyle(.primaryPill)
+                    .accessibilityIdentifier("add_suggestion_button")
 
                     VStack(alignment: .leading, spacing: 16) {
                         Text("HOW TO PLAY")
@@ -59,6 +66,9 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $isShowingHowToPlay) {
             HowToPlayView()
+        }
+        .sheet(isPresented: $isShowingAddSuggestion) {
+            AddSuggestionView()
         }
         .confirmationDialog(
             "This will delete all custom suggestions and clear all favorites.",

@@ -8,12 +8,22 @@ struct WordModeView: View {
     @EnvironmentObject private var persistenceAlertManager: PersistenceAlertManager
     @Query private var suggestions: [SuggestionItem]
 
-    @State private var selectedCategory: Category = .object
+    @State private var selectedCategories: Set<Category> = [.object]
     @State private var currentSuggestion: SuggestionItem?
     @State private var suggestionQueueManagers: [String: SuggestionQueueManager] = [:]
+    @State private var longPressedCategory: Category?
 
     private var filteredSuggestions: [SuggestionItem] {
-        suggestions.filter { $0.matchesCategory(selectedCategory) }
+        suggestions.filter { selectedCategories.contains($0.category) && !$0.isMissingStoredCategory }
+    }
+
+    private var selectedCategoryLabel: String {
+        guard !selectedCategories.isEmpty else { return "No Categories Selected" }
+
+        return selectableCategories
+            .filter { selectedCategories.contains($0) }
+            .map(\.displayName)
+            .joined(separator: ", ")
     }
 
     var body: some View {
@@ -27,28 +37,42 @@ struct WordModeView: View {
                     HStack(spacing: 12) {
                         ForEach(selectableCategories) { category in
                             Button(category.displayName) {
+                                guard longPressedCategory != category else {
+                                    longPressedCategory = nil
+                                    return
+                                }
+
                                 withAnimation(.spring()) {
-                                    selectedCategory = category
+                                    toggleCategory(category)
                                     generateSuggestion()
                                 }
                             }
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(selectedCategory == category ? .white : Color.gray)
+                            .foregroundStyle(selectedCategories.contains(category) ? .white : Color.gray)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 8)
                             .overlay(alignment: .bottom) {
                                 Rectangle()
-                                    .fill(selectedCategory == category ? Color.theme.accentDeepBlue : Color.clear)
+                                    .fill(selectedCategories.contains(category) ? Color.theme.accentDeepBlue : Color.clear)
                                     .frame(height: 2)
                             }
-                            .animation(.spring(), value: selectedCategory)
+                            .animation(.spring(), value: selectedCategories)
+                            .simultaneousGesture(
+                                LongPressGesture().onEnded { _ in
+                                    withAnimation(.spring()) {
+                                        longPressedCategory = category
+                                        selectOnlyCategory(category)
+                                        generateSuggestion()
+                                    }
+                                }
+                            )
                         }
                     }
                     .padding(.horizontal, 16)
                 }
 
                 VStack(alignment: .leading, spacing: 16) {
-                    Text(selectedCategory.displayName.uppercased())
+                    Text(selectedCategoryLabel.uppercased())
                         .font(.sectionLabel)
                         .tracking(1.5)
                         .foregroundStyle(Color.theme.accentSage)
@@ -97,14 +121,38 @@ struct WordModeView: View {
             }
         }
         .onChange(of: suggestions) { _, _ in
-            if currentSuggestion == nil || currentSuggestion?.category != selectedCategory {
+            if currentSuggestion == nil || !selectedCategories.contains(currentSuggestion?.category ?? .question) {
                 generateSuggestion()
             }
         }
     }
 
+    private func toggleCategory(_ category: Category) {
+        if selectedCategories.contains(category) {
+            selectedCategories.remove(category)
+        } else {
+            selectedCategories.insert(category)
+        }
+    }
+
+    private func selectOnlyCategory(_ category: Category) {
+        if selectedCategories.subtracting([category]).isEmpty == false {
+            HapticManager.impact(.medium)
+        }
+
+        selectedCategories = [category]
+    }
+
     private func generateSuggestion() {
-        let categoryKey = selectedCategory.rawValue
+        guard !selectedCategories.isEmpty else {
+            currentSuggestion = nil
+            return
+        }
+
+        let categoryKey = selectableCategories
+            .filter { selectedCategories.contains($0) }
+            .map(\.rawValue)
+            .joined(separator: "|")
         var queueManager = suggestionQueueManagers[categoryKey] ?? SuggestionQueueManager()
 
         currentSuggestion = queueManager.next(from: filteredSuggestions)

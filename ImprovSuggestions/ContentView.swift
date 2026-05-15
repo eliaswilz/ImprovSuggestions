@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var isShowingAddSuggestion = false
-
     init() {
         let backgroundColor = UIColor(red: 0.102, green: 0.102, blue: 0.102, alpha: 1.0)
         let borderColor = UIColor(red: 0.165, green: 0.165, blue: 0.165, alpha: 1.0)
@@ -77,19 +75,6 @@ struct ContentView: View {
             .toolbarBackground(Color.theme.darkBackground, for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
             .background(Color.theme.darkBackground)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isShowingAddSuggestion = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .accessibilityIdentifier("add_suggestion_button")
-                }
-            }
-            .sheet(isPresented: $isShowingAddSuggestion) {
-                AddSuggestionView()
-            }
         }
     }
 }
