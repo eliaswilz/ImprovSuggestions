@@ -19,11 +19,6 @@ struct QuestionModeView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 32) {
-                    ModeHeaderCard(
-                        title: "Question Mode",
-                        subtitle: "Tap to generate a new audience question"
-                    )
-
                     VStack(alignment: .leading, spacing: 24) {
                         Text(currentQuestion?.content ?? "No questions available")
                             .font(.suggestionTitle)

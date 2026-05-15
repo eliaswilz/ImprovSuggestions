@@ -31,11 +31,6 @@ struct GameModeView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 32) {
-                ModeHeaderCard(
-                    title: "Game Mode",
-                    subtitle: "Select a structure and regenerate playable ideas"
-                )
-
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(GameMode.allCases) { game in

@@ -23,11 +23,6 @@ struct WordModeView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 32) {
-                ModeHeaderCard(
-                    title: "Word Mode",
-                    subtitle: "Choose a category and generate a fresh prompt"
-                )
-
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(selectableCategories) { category in
