@@ -2,27 +2,9 @@ import SwiftData
 import SwiftUI
 
 struct GameModeView: View {
-    private enum GameMode: String, CaseIterable, Identifiable {
-        case firstLineLastLine = "First Line, Last Line"
-        case changingEmotions = "Changing Emotions"
-
-        var id: String { rawValue }
-    }
-
     @Query private var suggestions: [SuggestionItem]
-
-    @State private var selectedGame: GameMode = .firstLineLastLine
-    @State private var dialogueLine: SuggestionItem?
-    @State private var emotions: [SuggestionItem] = []
-    @State private var dialogueLineQueueManager = SuggestionQueueManager()
-
-    private var dialogueLines: [SuggestionItem] {
-        suggestions.filter { $0.matchesCategory(.dialogueLine) }
-    }
-
-    private var emotionSuggestions: [SuggestionItem] {
-        suggestions.filter { $0.matchesCategory(.emotion) }
-    }
+    
+    @State private var viewModel = GameModeViewModel()
 
     var body: some View {
         ZStack {
@@ -33,22 +15,22 @@ struct GameModeView: View {
                 // Fixed Header: Game Selector
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
-                        ForEach(GameMode.allCases) { game in
+                        ForEach(GameModeViewModel.GameMode.allCases) { game in
                             Button(game.rawValue) {
                                 withAnimation(.spring()) {
-                                    selectedGame = game
+                                    viewModel.selectGame(game)
                                 }
                             }
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(selectedGame == game ? .white : Color.gray)
+                            .foregroundStyle(viewModel.selectedGame == game ? .white : Color.gray)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 8)
                             .overlay(alignment: .bottom) {
                                 Rectangle()
-                                    .fill(selectedGame == game ? Color.theme.accentDeepBlue : Color.clear)
+                                    .fill(viewModel.selectedGame == game ? Color.theme.accentDeepBlue : Color.clear)
                                     .frame(height: 2)
                             }
-                            .animation(.spring(), value: selectedGame)
+                            .animation(.spring(), value: viewModel.selectedGame)
                         }
                     }
                     .padding(.horizontal, 32)
@@ -59,7 +41,7 @@ struct GameModeView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 32) {
                         Group {
-                            switch selectedGame {
+                            switch viewModel.selectedGame {
                             case .firstLineLastLine:
                                 firstLineLastLineView
                             case .changingEmotions:
@@ -74,7 +56,7 @@ struct GameModeView: View {
                 // Fixed Footer: Regenerate Button
                 Button("Regenerate") {
                     HapticManager.impact(.light)
-                    regenerateCurrentGame()
+                    viewModel.regenerateCurrentGame()
                 }
                 .buttonStyle(.primaryPill)
                 .padding(.horizontal, 32)
@@ -83,28 +65,23 @@ struct GameModeView: View {
             }
         }
         .onAppear {
-            if emotions.isEmpty {
-                regenerateCurrentGame()
-            }
+            viewModel.updateSuggestions(suggestions)
         }
-        .onChange(of: selectedGame) { _, _ in
-            regenerateCurrentGame()
-        }
-        .onChange(of: suggestions) { _, _ in
-            regenerateCurrentGame()
+        .onChange(of: suggestions) { _, newSuggestions in
+            viewModel.updateSuggestions(newSuggestions)
         }
     }
 
     private var firstLineLastLineView: some View {
         VStack(spacing: 24) {
-            lineCard(title: "First Line:", text: dialogueLine?.content ?? "No dialogue lines available")
-            lineCard(title: "Last Line:", text: dialogueLine?.secondaryContent ?? "No last line available")
+            lineCard(title: "First Line:", text: viewModel.dialogueLine?.content ?? "No dialogue lines available")
+            lineCard(title: "Last Line:", text: viewModel.dialogueLine?.secondaryContent ?? "No last line available")
         }
     }
 
     private var changingEmotionsView: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ForEach(Array(emotions.enumerated()), id: \.element.id) { index, emotion in
+            ForEach(Array(viewModel.emotions.enumerated()), id: \.element.id) { index, emotion in
                 HStack(spacing: 16) {
                     Text("\(index + 1)")
                         .font(.caption.bold())
@@ -120,7 +97,7 @@ struct GameModeView: View {
                 .padding(.vertical, 12)
                 .padding(.horizontal, 24)
 
-                if index < emotions.count - 1 {
+                if index < viewModel.emotions.count - 1 {
                     Rectangle()
                         .fill(Color.theme.offWhite.opacity(0.05))
                         .frame(height: 1)
@@ -133,11 +110,8 @@ struct GameModeView: View {
     }
 
     private func lineCard(title: String, text: String) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(title.uppercased())
-                .font(.sectionLabel)
-                .tracking(1.5)
-                .foregroundStyle(Color.theme.accentSage)
+        SuggestionCardView {
+            SectionHeaderView(text: title)
 
             Text(text)
                 .font(.title.weight(.bold))
@@ -147,19 +121,6 @@ struct GameModeView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .minimumScaleFactor(0.5)
                 .accessibilityIdentifier(title.hasPrefix("First") ? "first_line_text" : "last_line_text")
-        }
-        .padding(32)
-        .frame(maxWidth: .infinity, alignment: .topLeading)
-        .background(Color.theme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-    }
-
-    private func regenerateCurrentGame() {
-        switch selectedGame {
-        case .firstLineLastLine:
-            dialogueLine = dialogueLineQueueManager.next(from: dialogueLines)
-        case .changingEmotions:
-            emotions = Array(emotionSuggestions.shuffled().prefix(15))
         }
     }
 }

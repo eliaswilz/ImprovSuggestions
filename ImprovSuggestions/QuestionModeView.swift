@@ -3,14 +3,8 @@ import SwiftUI
 
 struct QuestionModeView: View {
     @Query private var suggestions: [SuggestionItem]
-
-    @State private var currentQuestion: SuggestionItem?
-    @State private var isShowingAudienceResponse = false
-    @State private var questionQueueManager = SuggestionQueueManager()
-
-    private var questions: [SuggestionItem] {
-        suggestions.filter { $0.matchesCategory(.question) }
-    }
+    
+    @State private var viewModel = QuestionModeViewModel()
 
     var body: some View {
         ZStack {
@@ -19,48 +13,41 @@ struct QuestionModeView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 32) {
-                    VStack(alignment: .leading, spacing: 24) {
-                        Text(currentQuestion?.content ?? "No questions available")
-                            .font(.suggestionTitle)
-                            .foregroundStyle(Color.theme.offWhite)
-                            .multilineTextAlignment(.leading)
-                            .minimumScaleFactor(0.5)
-                            .accessibilityIdentifier("question_text")
+                SuggestionCardView(spacing: 24) {
+                    Text(viewModel.currentQuestion?.content ?? "No questions available")
+                        .font(.suggestionTitle)
+                        .foregroundStyle(Color.theme.offWhite)
+                        .multilineTextAlignment(.leading)
+                        .minimumScaleFactor(0.5)
+                        .accessibilityIdentifier("question_text")
 
-                        if isShowingAudienceResponse, let secondaryContent = currentQuestion?.secondaryContent {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("AUDIENCE RESPONSE")
-                                    .font(.sectionLabel)
-                                    .tracking(1.5)
-                                    .foregroundStyle(Color.theme.accentSage)
+                    if viewModel.isShowingAudienceResponse, let secondaryContent = viewModel.currentQuestion?.secondaryContent {
+                        VStack(alignment: .leading, spacing: 8) {
+                            SectionHeaderView(text: "AUDIENCE RESPONSE")
 
-                                Text(secondaryContent)
-                                    .font(.title2.weight(.semibold))
-                                    .foregroundStyle(Color.theme.offWhite)
-                                    .multilineTextAlignment(.leading)
-                            }
+                            Text(secondaryContent)
+                                .font(.title2.weight(.semibold))
+                                .foregroundStyle(Color.theme.offWhite)
+                                .multilineTextAlignment(.leading)
                         }
                     }
-                    .padding(32)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .background(Color.theme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
 
                     VStack(spacing: 16) {
                         Button("Next Question") {
                             HapticManager.impact(.light)
-                            showRandomQuestion()
+                            viewModel.showNextQuestion()
                         }
                         .buttonStyle(.primaryPill)
                         .accessibilityIdentifier("next_question_button")
 
                         Button("Simulate Audience Response") {
-                            isShowingAudienceResponse = true
+                            viewModel.toggleAudienceResponse()
                         }
                         .buttonStyle(.primaryPill)
                         .accessibilityIdentifier("simulate_audience_response_button")
-                        .disabled(currentQuestion?.secondaryContent == nil)
-                        .opacity(currentQuestion?.secondaryContent == nil ? 0.5 : 1)
+                        .disabled(viewModel.currentQuestion?.secondaryContent == nil)
+                        .opacity(viewModel.currentQuestion?.secondaryContent == nil ? 0.5 : 1)
                     }
                 }
                 .padding(.horizontal, 32)
@@ -68,20 +55,11 @@ struct QuestionModeView: View {
             }
         }
         .onAppear {
-            if currentQuestion == nil {
-                showRandomQuestion()
-            }
+            viewModel.updateSuggestions(suggestions)
         }
-        .onChange(of: questions) { _, _ in
-            if currentQuestion == nil {
-                showRandomQuestion()
-            }
+        .onChange(of: suggestions) { _, newSuggestions in
+            viewModel.updateSuggestions(newSuggestions)
         }
-    }
-
-    private func showRandomQuestion() {
-        currentQuestion = questionQueueManager.next(from: questions)
-        isShowingAudienceResponse = false
     }
 }
 
