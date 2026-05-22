@@ -17,20 +17,13 @@ struct SettingsView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("SETTINGS")
-                            .font(.sectionLabel)
-                            .tracking(1.5)
-                            .foregroundStyle(Color.theme.offWhite.opacity(0.65))
+                    SuggestionCardView {
+                        SectionHeaderView(text: "SETTINGS", color: Color.theme.offWhite.opacity(0.65))
 
                         Text("Customize and manage your suggestion library.")
                             .font(.subheadline)
                             .foregroundStyle(Color.gray)
                     }
-                    .padding(32)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.theme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                     Button("Add Suggestion") {
                         isShowingAddSuggestion = true
@@ -38,11 +31,8 @@ struct SettingsView: View {
                     .buttonStyle(.primaryPill)
                     .accessibilityIdentifier("add_suggestion_button")
 
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("HOW TO PLAY")
-                            .font(.sectionLabel)
-                            .tracking(1.5)
-                            .foregroundStyle(Color.theme.accentSage)
+                    SuggestionCardView(backgroundColor: Color.theme.headerCardBackground) {
+                        SectionHeaderView(text: "HOW TO PLAY")
 
                         Button("Open Guide") {
                             isShowingHowToPlay = true
@@ -50,10 +40,6 @@ struct SettingsView: View {
                         .buttonStyle(.primaryPill)
                         .accessibilityIdentifier("how_to_play_button")
                     }
-                    .padding(32)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.theme.headerCardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                     Button("Reset App Data") {
                         isShowingResetConfirmation = true
@@ -84,23 +70,11 @@ struct SettingsView: View {
     }
 
     private func resetAppData() {
-        for suggestion in suggestions {
-            if suggestion.isCustom {
-                modelContext.delete(suggestion)
-            } else if suggestion.isFavorite {
-                suggestion.isFavorite = false
-            }
-        }
-
-        do {
-            try modelContext.save()
-        } catch {
-            modelContext.rollback()
-            persistenceAlertManager.showSaveError(
-                action: "Your app data could not be reset.",
-                error: error
-            )
-        }
+        DataManager.shared.resetAppData(
+            suggestions: suggestions,
+            modelContext: modelContext,
+            alertManager: persistenceAlertManager
+        )
     }
 }
 

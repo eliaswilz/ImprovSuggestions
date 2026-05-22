@@ -129,4 +129,38 @@ final class DataManager {
             try modelContext.save()
         }
     }
+
+    func toggleFavorite(suggestion: SuggestionItem, modelContext: ModelContext, alertManager: PersistenceAlertManager) {
+        suggestion.isFavorite.toggle()
+        
+        do {
+            try modelContext.save()
+        } catch {
+            suggestion.isFavorite.toggle()
+            alertManager.showSaveError(
+                action: "Your favorite change could not be saved.",
+                error: error
+            )
+        }
+    }
+
+    func resetAppData(suggestions: [SuggestionItem], modelContext: ModelContext, alertManager: PersistenceAlertManager) {
+        for suggestion in suggestions {
+            if suggestion.isCustom {
+                modelContext.delete(suggestion)
+            } else if suggestion.isFavorite {
+                suggestion.isFavorite = false
+            }
+        }
+
+        do {
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            alertManager.showSaveError(
+                action: "Your app data could not be reset.",
+                error: error
+            )
+        }
+    }
 }
