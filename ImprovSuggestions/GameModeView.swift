@@ -29,8 +29,8 @@ struct GameModeView: View {
             Color.theme.darkBackground
                 .ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 32) {
+            VStack(alignment: .leading, spacing: 0) {
+                // Fixed Header: Game Selector
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(GameMode.allCases) { game in
@@ -51,31 +51,41 @@ struct GameModeView: View {
                             .animation(.spring(), value: selectedGame)
                         }
                     }
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 32)
                 }
+                .padding(.vertical, 32)
 
-                Group {
-                    switch selectedGame {
-                    case .firstLineLastLine:
-                        firstLineLastLineView
-                    case .changingEmotions:
-                        changingEmotionsView
+                // Scrollable Content Area
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 32) {
+                        Group {
+                            switch selectedGame {
+                            case .firstLineLastLine:
+                                firstLineLastLineView
+                            case .changingEmotions:
+                                changingEmotionsView
+                            }
+                        }
                     }
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 24)
                 }
 
-                Button(selectedGame == .firstLineLastLine ? "Regenerate" : "Regenerate") {
+                // Fixed Footer: Regenerate Button
+                Button("Regenerate") {
                     HapticManager.impact(.light)
                     regenerateCurrentGame()
                 }
                 .buttonStyle(.primaryPill)
-                .accessibilityIdentifier("regenerate_button")
-                }
                 .padding(.horizontal, 32)
-                .padding(.vertical, 32)
+                .padding(.bottom, 32)
+                .accessibilityIdentifier("regenerate_button")
             }
         }
         .onAppear {
-            regenerateCurrentGame()
+            if emotions.isEmpty {
+                regenerateCurrentGame()
+            }
         }
         .onChange(of: selectedGame) { _, _ in
             regenerateCurrentGame()
@@ -93,28 +103,33 @@ struct GameModeView: View {
     }
 
     private var changingEmotionsView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                ForEach(Array(emotions.enumerated()), id: \.element.id) { index, emotion in
-                    HStack(spacing: 16) {
-                        Text("\(index + 1)")
-                            .font(.readableBody)
-                            .foregroundStyle(Color.theme.offWhite.opacity(0.65))
-                            .frame(width: 36, alignment: .trailing)
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(emotions.enumerated()), id: \.element.id) { index, emotion in
+                HStack(spacing: 16) {
+                    Text("\(index + 1)")
+                        .font(.caption.bold())
+                        .foregroundStyle(Color.theme.accentOlive)
+                        .frame(width: 20, alignment: .leading)
 
-                        Text(emotion.content)
-                            .font(.readableBody)
-                            .foregroundStyle(Color.theme.offWhite)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityIdentifier("emotion_text_\(index + 1)")
-                    }
-                    .padding(20)
-                    .background(Color.theme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    Text(emotion.content)
+                        .font(.readableBody)
+                        .foregroundStyle(Color.theme.offWhite)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityIdentifier("emotion_text_\(index + 1)")
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 24)
+
+                if index < emotions.count - 1 {
+                    Rectangle()
+                        .fill(Color.theme.offWhite.opacity(0.05))
+                        .frame(height: 1)
+                        .padding(.horizontal, 24)
                 }
             }
-            .padding(.vertical, 32)
         }
+        .background(Color.theme.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
     private func lineCard(title: String, text: String) -> some View {
