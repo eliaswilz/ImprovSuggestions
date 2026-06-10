@@ -11,6 +11,7 @@ import SwiftData
 @main
 struct ImprovSuggestionsApp: App {
     @StateObject private var persistenceAlertManager = PersistenceAlertManager.shared
+    @State private var appState = AppState()
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -44,6 +45,7 @@ struct ImprovSuggestionsApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(persistenceAlertManager)
+                .environment(appState)
                 .alert(item: $persistenceAlertManager.currentAlert) { alert in
                     Alert(
                         title: Text(alert.title),

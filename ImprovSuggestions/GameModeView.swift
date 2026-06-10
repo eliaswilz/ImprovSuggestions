@@ -2,10 +2,9 @@ import SwiftData
 import SwiftUI
 
 struct GameModeView: View {
+    @Environment(AppState.self) private var appState
     @Query private var suggestions: [SuggestionItem]
     
-    @State private var viewModel = GameModeViewModel()
-
     var body: some View {
         ZStack {
             Color.theme.darkBackground
@@ -15,22 +14,22 @@ struct GameModeView: View {
                 // Fixed Header: Game Selector
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
-                        ForEach(GameModeViewModel.GameMode.allCases) { game in
+                        ForEach(AppState.GameMode.allCases) { game in
                             Button(game.rawValue) {
                                 withAnimation(.spring()) {
-                                    viewModel.selectGame(game)
+                                    appState.selectGame(game)
                                 }
                             }
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(viewModel.selectedGame == game ? .white : Color.gray)
+                            .foregroundStyle(appState.selectedGame == game ? .white : Color.gray)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 8)
                             .overlay(alignment: .bottom) {
                                 Rectangle()
-                                    .fill(viewModel.selectedGame == game ? Color.theme.accentDeepBlue : Color.clear)
+                                    .fill(appState.selectedGame == game ? Color.theme.accentDeepBlue : Color.clear)
                                     .frame(height: 2)
                             }
-                            .animation(.spring(), value: viewModel.selectedGame)
+                            .animation(.spring(), value: appState.selectedGame)
                         }
                     }
                     .padding(.horizontal, 32)
@@ -41,7 +40,7 @@ struct GameModeView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 32) {
                         Group {
-                            switch viewModel.selectedGame {
+                            switch appState.selectedGame {
                             case .firstLineLastLine:
                                 firstLineLastLineView
                             case .changingEmotions:
@@ -56,7 +55,7 @@ struct GameModeView: View {
                 // Fixed Footer: Regenerate Button
                 Button("Regenerate") {
                     HapticManager.impact(.light)
-                    viewModel.regenerateCurrentGame()
+                    appState.regenerateCurrentGame()
                 }
                 .buttonStyle(.primaryPill)
                 .padding(.horizontal, 32)
@@ -65,23 +64,23 @@ struct GameModeView: View {
             }
         }
         .onAppear {
-            viewModel.updateSuggestions(suggestions)
+            appState.suggestions = suggestions
         }
         .onChange(of: suggestions) { _, newSuggestions in
-            viewModel.updateSuggestions(newSuggestions)
+            appState.suggestions = newSuggestions
         }
     }
 
     private var firstLineLastLineView: some View {
         VStack(spacing: 24) {
-            lineCard(title: "First Line:", text: viewModel.dialogueLine?.content ?? "No dialogue lines available")
-            lineCard(title: "Last Line:", text: viewModel.dialogueLine?.secondaryContent ?? "No last line available")
+            lineCard(title: "First Line:", text: appState.dialogueLine?.content ?? "No dialogue lines available")
+            lineCard(title: "Last Line:", text: appState.dialogueLine?.secondaryContent ?? "No last line available")
         }
     }
 
     private var changingEmotionsView: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ForEach(Array(viewModel.emotions.enumerated()), id: \.element.id) { index, emotion in
+            ForEach(Array(appState.emotions.enumerated()), id: \.element.id) { index, emotion in
                 HStack(spacing: 16) {
                     Text("\(index + 1)")
                         .font(.caption.bold())
@@ -97,7 +96,7 @@ struct GameModeView: View {
                 .padding(.vertical, 12)
                 .padding(.horizontal, 24)
 
-                if index < viewModel.emotions.count - 1 {
+                if index < appState.emotions.count - 1 {
                     Rectangle()
                         .fill(Color.theme.offWhite.opacity(0.05))
                         .frame(height: 1)

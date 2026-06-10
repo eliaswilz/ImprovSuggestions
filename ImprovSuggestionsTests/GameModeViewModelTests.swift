@@ -4,17 +4,17 @@ import SwiftData
 
 @MainActor
 final class GameModeViewModelTests: XCTestCase {
-    var viewModel: GameModeViewModel!
+    var appState: AppState!
     
     override func setUp() {
-        viewModel = GameModeViewModel()
+        appState = AppState()
     }
     
     func testGameSelection() {
-        XCTAssertEqual(viewModel.selectedGame, .firstLineLastLine)
+        XCTAssertEqual(appState.selectedGame, .firstLineLastLine)
         
-        viewModel.selectGame(.changingEmotions)
-        XCTAssertEqual(viewModel.selectedGame, .changingEmotions)
+        appState.selectGame(.changingEmotions)
+        XCTAssertEqual(appState.selectedGame, .changingEmotions)
     }
     
     func testRegenerateFirstLineLastLine() {
@@ -22,12 +22,12 @@ final class GameModeViewModelTests: XCTestCase {
             SuggestionItem(content: "First", secondaryContent: "Last", category: .dialogueLine)
         ]
         
-        viewModel.updateSuggestions(suggestions)
-        viewModel.selectGame(.firstLineLastLine)
+        appState.suggestions = suggestions
+        appState.selectGame(.firstLineLastLine)
         
-        XCTAssertNotNil(viewModel.dialogueLine)
-        XCTAssertEqual(viewModel.dialogueLine?.content, "First")
-        XCTAssertEqual(viewModel.dialogueLine?.secondaryContent, "Last")
+        XCTAssertNotNil(appState.dialogueLine)
+        XCTAssertEqual(appState.dialogueLine?.content, "First")
+        XCTAssertEqual(appState.dialogueLine?.secondaryContent, "Last")
     }
     
     func testRegenerateChangingEmotions() {
@@ -36,10 +36,10 @@ final class GameModeViewModelTests: XCTestCase {
             suggestions.append(SuggestionItem(content: "Emotion \(i)", category: .emotion))
         }
         
-        viewModel.updateSuggestions(suggestions)
-        viewModel.selectGame(.changingEmotions)
+        appState.suggestions = suggestions
+        appState.selectGame(.changingEmotions)
         
-        XCTAssertEqual(viewModel.emotions.count, 15)
-        XCTAssertTrue(viewModel.emotions.allSatisfy { $0.category == .emotion })
+        XCTAssertEqual(appState.emotions.count, 15)
+        XCTAssertTrue(appState.emotions.allSatisfy { $0.category == .emotion })
     }
 }

@@ -4,10 +4,10 @@ import SwiftData
 
 @MainActor
 final class QuestionModeViewModelTests: XCTestCase {
-    var viewModel: QuestionModeViewModel!
+    var appState: AppState!
     
     override func setUp() {
-        viewModel = QuestionModeViewModel()
+        appState = AppState()
     }
     
     func testFilteringQuestions() {
@@ -17,10 +17,10 @@ final class QuestionModeViewModelTests: XCTestCase {
             SuggestionItem(content: "Question 2", category: .question)
         ]
         
-        viewModel.updateSuggestions(suggestions)
+        appState.suggestions = suggestions
         
-        XCTAssertEqual(viewModel.questions.count, 2)
-        XCTAssertTrue(viewModel.questions.allSatisfy { $0.category == .question })
+        XCTAssertEqual(appState.questions.count, 2)
+        XCTAssertTrue(appState.questions.allSatisfy { $0.category == .question })
     }
     
     func testShowNextQuestion() {
@@ -29,18 +29,18 @@ final class QuestionModeViewModelTests: XCTestCase {
             SuggestionItem(content: "Question 2", category: .question)
         ]
         
-        viewModel.updateSuggestions(suggestions)
-        let first = viewModel.currentQuestion
+        appState.suggestions = suggestions
+        let first = appState.currentQuestion
         
-        viewModel.showNextQuestion()
-        let second = viewModel.currentQuestion
+        appState.showNextQuestion()
+        let second = appState.currentQuestion
         
         XCTAssertNotEqual(first?.id, second?.id)
     }
     
     func testToggleAudienceResponse() {
-        XCTAssertFalse(viewModel.isShowingAudienceResponse)
-        viewModel.toggleAudienceResponse()
-        XCTAssertTrue(viewModel.isShowingAudienceResponse)
+        XCTAssertFalse(appState.isShowingAudienceResponse)
+        appState.toggleAudienceResponse()
+        XCTAssertTrue(appState.isShowingAudienceResponse)
     }
 }

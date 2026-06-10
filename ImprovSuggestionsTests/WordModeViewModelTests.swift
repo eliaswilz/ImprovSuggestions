@@ -4,13 +4,13 @@ import SwiftData
 
 @MainActor
 final class WordModeViewModelTests: XCTestCase {
-    var viewModel: WordModeViewModel!
+    var appState: AppState!
     var container: ModelContainer!
     
     override func setUp() async throws {
-        viewModel = WordModeViewModel()
+        appState = AppState()
         container = try ModelContainer(for: SuggestionItem.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        viewModel.setModelContext(container.mainContext)
+        appState.setModelContext(container.mainContext)
     }
     
     func testFilteringByCategory() {
@@ -20,11 +20,11 @@ final class WordModeViewModelTests: XCTestCase {
             SuggestionItem(content: "Object 2", category: .object)
         ]
         
-        viewModel.updateSuggestions(suggestions)
-        viewModel.selectedCategories = [.object]
+        appState.suggestions = suggestions
+        appState.selectedCategories = [.object]
         
-        XCTAssertEqual(viewModel.filteredSuggestions.count, 2)
-        XCTAssertTrue(viewModel.filteredSuggestions.allSatisfy { $0.category == .object })
+        XCTAssertEqual(appState.filteredWordSuggestions.count, 2)
+        XCTAssertTrue(appState.filteredWordSuggestions.allSatisfy { $0.category == .object })
     }
     
     func testMultiCategoryFiltering() {
@@ -34,34 +34,34 @@ final class WordModeViewModelTests: XCTestCase {
             SuggestionItem(content: "Profession 1", category: .profession)
         ]
         
-        viewModel.updateSuggestions(suggestions)
-        viewModel.selectedCategories = [.object, .location]
+        appState.suggestions = suggestions
+        appState.selectedCategories = [.object, .location]
         
-        XCTAssertEqual(viewModel.filteredSuggestions.count, 2)
+        XCTAssertEqual(appState.filteredWordSuggestions.count, 2)
     }
     
     func testToggleCategory() {
-        XCTAssertTrue(viewModel.selectedCategories.contains(.object))
+        XCTAssertTrue(appState.selectedCategories.contains(.object))
         
-        viewModel.toggleCategory(.object)
-        XCTAssertFalse(viewModel.selectedCategories.contains(.object))
+        appState.toggleCategory(.object)
+        XCTAssertFalse(appState.selectedCategories.contains(.object))
         
-        viewModel.toggleCategory(.object)
-        XCTAssertTrue(viewModel.selectedCategories.contains(.object))
+        appState.toggleCategory(.object)
+        XCTAssertTrue(appState.selectedCategories.contains(.object))
     }
     
     func testSelectOnlyCategory() {
-        viewModel.selectedCategories = [.object, .location]
+        appState.selectedCategories = [.object, .location]
         
-        viewModel.selectOnlyCategory(.profession)
+        appState.selectOnlyCategory(.profession)
         
-        XCTAssertEqual(viewModel.selectedCategories.count, 1)
-        XCTAssertTrue(viewModel.selectedCategories.contains(.profession))
+        XCTAssertEqual(appState.selectedCategories.count, 1)
+        XCTAssertTrue(appState.selectedCategories.contains(.profession))
     }
     
     func testGenerateSuggestionClearsIfEmptyCategories() {
-        viewModel.selectedCategories = []
-        viewModel.generateSuggestion()
-        XCTAssertNil(viewModel.currentSuggestion)
+        appState.selectedCategories = []
+        appState.generateWordSuggestion()
+        XCTAssertNil(appState.currentSuggestion)
     }
 }
