@@ -4,10 +4,9 @@ import SwiftUI
 struct WordModeView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var persistenceAlertManager: PersistenceAlertManager
+    @Environment(AppState.self) private var appState
     @Query private var suggestions: [SuggestionItem]
     
-    @State private var viewModel = WordModeViewModel()
-
     var body: some View {
         ZStack {
             Color.theme.darkBackground
@@ -17,34 +16,34 @@ struct WordModeView: View {
                 VStack(alignment: .leading, spacing: 32) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
-                        ForEach(viewModel.selectableCategories) { category in
+                        ForEach(appState.selectableWordCategories) { category in
                             Button(category.displayName) {
-                                guard viewModel.longPressedCategory != category else {
-                                    viewModel.longPressedCategory = nil
+                                guard appState.longPressedCategory != category else {
+                                    appState.longPressedCategory = nil
                                     return
                                 }
 
                                 withAnimation(.spring()) {
-                                    viewModel.toggleCategory(category)
-                                    viewModel.generateSuggestion()
+                                    appState.toggleCategory(category)
+                                    appState.generateWordSuggestion()
                                 }
                             }
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(viewModel.selectedCategories.contains(category) ? .white : Color.gray)
+                            .foregroundStyle(appState.selectedCategories.contains(category) ? .white : Color.gray)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 8)
                             .overlay(alignment: .bottom) {
                                 Rectangle()
-                                    .fill(viewModel.selectedCategories.contains(category) ? Color.theme.accentDeepBlue : Color.clear)
+                                    .fill(appState.selectedCategories.contains(category) ? Color.theme.accentDeepBlue : Color.clear)
                                     .frame(height: 2)
                             }
-                            .animation(.spring(), value: viewModel.selectedCategories)
+                            .animation(.spring(), value: appState.selectedCategories)
                             .simultaneousGesture(
                                 LongPressGesture().onEnded { _ in
                                     withAnimation(.spring()) {
-                                        viewModel.longPressedCategory = category
-                                        viewModel.selectOnlyCategory(category)
-                                        viewModel.generateSuggestion()
+                                        appState.longPressedCategory = category
+                                        appState.selectOnlyCategory(category)
+                                        appState.generateWordSuggestion()
                                     }
                                 }
                             )
@@ -54,9 +53,9 @@ struct WordModeView: View {
                 }
 
                 SuggestionCardView(trailingPadding: 28) {
-                    SectionHeaderView(text: viewModel.selectedCategoryLabel)
+                    SectionHeaderView(text: appState.selectedCategoryLabel)
 
-                    Text(viewModel.currentSuggestion?.content ?? "Tap Generate")
+                    Text(appState.currentSuggestion?.content ?? "Tap Generate")
                         .font(.suggestionTitle)
                         .foregroundStyle(Color.theme.offWhite)
                         .multilineTextAlignment(.leading)
@@ -66,21 +65,21 @@ struct WordModeView: View {
                 .overlay(alignment: .topTrailing) {
                     Button {
                         HapticManager.impact(.medium)
-                        viewModel.toggleFavorite(persistenceAlertManager: persistenceAlertManager)
+                        appState.toggleFavorite(persistenceAlertManager: persistenceAlertManager)
                     } label: {
-                        Image(systemName: viewModel.currentSuggestion?.isFavorite == true ? "heart.fill" : "heart")
+                        Image(systemName: appState.currentSuggestion?.isFavorite == true ? "heart.fill" : "heart")
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(viewModel.currentSuggestion?.isFavorite == true ? Color.theme.accentPurple : Color.gray.opacity(0.65))
+                            .foregroundStyle(appState.currentSuggestion?.isFavorite == true ? Color.theme.accentPurple : Color.gray.opacity(0.65))
                             .padding(16)
                     }
-                    .disabled(viewModel.currentSuggestion == nil)
-                    .opacity(viewModel.currentSuggestion == nil ? 0.5 : 1)
+                    .disabled(appState.currentSuggestion == nil)
+                    .opacity(appState.currentSuggestion == nil ? 0.5 : 1)
                     .accessibilityIdentifier("favorite_button")
                 }
 
                 Button("Generate") {
                     HapticManager.impact(.light)
-                    viewModel.generateSuggestion()
+                    appState.generateWordSuggestion()
                 }
                 .buttonStyle(.primaryPill)
                 .accessibilityIdentifier("generate_button")
@@ -90,11 +89,11 @@ struct WordModeView: View {
             }
         }
         .onAppear {
-            viewModel.setModelContext(modelContext)
-            viewModel.updateSuggestions(suggestions)
+            appState.setModelContext(modelContext)
+            appState.suggestions = suggestions
         }
         .onChange(of: suggestions) { _, newSuggestions in
-            viewModel.updateSuggestions(newSuggestions)
+            appState.suggestions = newSuggestions
         }
     }
 }
