@@ -1,15 +1,38 @@
 import Foundation
 import SwiftData
 
-enum Category: String, Codable, CaseIterable, Identifiable {
+enum Category: Codable, CaseIterable, Identifiable, RawRepresentable {
     case question
     case object
     case location
     case profession
     case emotion
-    case dialogueLine
+    case dialogue
 
     var id: String { rawValue }
+
+    var rawValue: String {
+        switch self {
+        case .question: "question"
+        case .object: "object"
+        case .location: "location"
+        case .profession: "profession"
+        case .emotion: "emotion"
+        case .dialogue: "dialogue"
+        }
+    }
+
+    init?(rawValue: String) {
+        switch rawValue {
+        case "question": self = .question
+        case "object": self = .object
+        case "location": self = .location
+        case "profession": self = .profession
+        case "emotion": self = .emotion
+        case "dialogue", "dialogueLine": self = .dialogue
+        default: return nil
+        }
+    }
 
     var displayName: String {
         switch self {
@@ -23,8 +46,8 @@ enum Category: String, Codable, CaseIterable, Identifiable {
             "Profession"
         case .emotion:
             "Emotion"
-        case .dialogueLine:
-            "Dialogue Line"
+        case .dialogue:
+            "Dialogue"
         }
     }
 }

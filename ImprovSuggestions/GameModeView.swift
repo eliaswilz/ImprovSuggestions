@@ -73,8 +73,8 @@ struct GameModeView: View {
 
     private var firstLineLastLineView: some View {
         VStack(spacing: 24) {
-            lineCard(title: "First Line:", text: appState.dialogueLine?.content ?? "No dialogue lines available")
-            lineCard(title: "Last Line:", text: appState.dialogueLine?.secondaryContent ?? "No last line available")
+            lineCard(title: "First Line:", text: appState.firstLine?.content ?? "No dialogue lines available")
+            lineCard(title: "Last Line:", text: appState.lastLine?.content ?? "No last line available")
         }
     }
 

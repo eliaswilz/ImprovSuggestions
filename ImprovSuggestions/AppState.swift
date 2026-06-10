@@ -52,12 +52,13 @@ final class AppState {
     }
     
     var selectedGame: GameMode = .firstLineLastLine
-    var dialogueLine: SuggestionItem?
+    var firstLine: SuggestionItem?
+    var lastLine: SuggestionItem?
     var emotions: [SuggestionItem] = []
-    private var dialogueLineQueueManager = SuggestionQueueManager()
+    private var dialogueQueueManager = SuggestionQueueManager()
     
     private var dialogueLines: [SuggestionItem] {
-        suggestions.filter { $0.matchesCategory(.dialogueLine) }
+        suggestions.filter { $0.matchesCategory(.dialogue) }
     }
     
     private var emotionSuggestions: [SuggestionItem] {
@@ -81,7 +82,7 @@ final class AppState {
         }
         
         // Update Game Mode
-        if emotions.isEmpty || dialogueLine == nil {
+        if emotions.isEmpty || firstLine == nil || lastLine == nil {
             regenerateCurrentGame()
         }
     }
@@ -146,7 +147,10 @@ final class AppState {
     func regenerateCurrentGame() {
         switch selectedGame {
         case .firstLineLastLine:
-            dialogueLine = dialogueLineQueueManager.next(from: dialogueLines)
+            firstLine = dialogueQueueManager.next(from: dialogueLines)
+            // Pick a different line for the last line
+            let remainingLines = dialogueLines.filter { $0.id != firstLine?.id }
+            lastLine = remainingLines.shuffled().first
         case .changingEmotions:
             emotions = Array(emotionSuggestions.shuffled().prefix(15))
         }
