@@ -19,7 +19,7 @@ final class AppState {
     var currentSuggestion: SuggestionItem?
     var longPressedCategory: Category?
     private var wordQueueManagers: [String: SuggestionQueueManager] = [:]
-    let selectableWordCategories: [Category] = [.object, .location, .profession, .emotion]
+    let selectableWordCategories: [Category] = [.object, .location, .profession, .celebrity]
     
     var filteredWordSuggestions: [SuggestionItem] {
         suggestions.filter { selectedCategories.contains($0.category) && !$0.isMissingStoredCategory }

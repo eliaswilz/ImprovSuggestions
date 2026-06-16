@@ -7,6 +7,7 @@ enum Category: Codable, CaseIterable, Identifiable, RawRepresentable {
     case location
     case profession
     case emotion
+    case celebrity
     case dialogue
 
     var id: String { rawValue }
@@ -18,6 +19,7 @@ enum Category: Codable, CaseIterable, Identifiable, RawRepresentable {
         case .location: "location"
         case .profession: "profession"
         case .emotion: "emotion"
+        case .celebrity: "celebrity"
         case .dialogue: "dialogue"
         }
     }
@@ -29,6 +31,7 @@ enum Category: Codable, CaseIterable, Identifiable, RawRepresentable {
         case "location": self = .location
         case "profession": self = .profession
         case "emotion": self = .emotion
+        case "celebrity": self = .celebrity
         case "dialogue", "dialogueLine": self = .dialogue
         default: return nil
         }
@@ -46,6 +49,8 @@ enum Category: Codable, CaseIterable, Identifiable, RawRepresentable {
             "Profession"
         case .emotion:
             "Emotion"
+        case .celebrity:
+            "Celebrity"
         case .dialogue:
             "Dialogue"
         }
