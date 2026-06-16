@@ -321,7 +321,7 @@
   },
   {
     "id": "1D80C3B5-97C0-43E8-9785-24ACD952F617",
-    "content": "A Suspiciously Heavy Briefcase",
+    "content": "A Heavy Briefcase",
     "category": "object"
   },
   {
@@ -336,22 +336,22 @@
   },
   {
     "id": "AE019CF9-285F-4B9D-AF6F-BF4DA732AC9B",
-    "content": "An Umbrella That Only Opens Indoors",
+    "content": "Umbrella",
     "category": "object"
   },
   {
     "id": "A021FC2B-9ACF-4998-AC8A-B1B642889FC9",
-    "content": "A Cookbook Written In Invisible Ink",
+    "content": "Cookbook",
     "category": "object"
   },
   {
     "id": "983905A5-4B5B-480B-8945-0B55FFB0EB10",
-    "content": "A Trophy For Worst Customer Service",
+    "content": "Trophy",
     "category": "object"
   },
   {
     "id": "A5E5F4D0-70F2-49B9-A816-51345D921565",
-    "content": "A Bouquet Of Plastic Roses",
+    "content": "Plastic Roses",
     "category": "object"
   },
   {
@@ -361,47 +361,47 @@
   },
   {
     "id": "3CA12579-9B0E-4014-903F-ABBB4C15F38F",
-    "content": "An Abandoned Amusement Park",
+    "content": "Abandoned Amusement Park",
     "category": "location"
   },
   {
     "id": "E9D5C1CB-20BC-40F9-B2B7-885CE8A35AB0",
-    "content": "The Break Room Of A Luxury Hotel",
+    "content": "Luxury Hotel Break Room",
     "category": "location"
   },
   {
     "id": "6C19E1ED-2C9E-4725-B99A-77F1F61EC7C7",
-    "content": "A Submarine Gift Shop",
+    "content": "Submarine",
     "category": "location"
   },
   {
     "id": "076B1C4E-8036-4DDE-824C-FB0BF0FEFC47",
-    "content": "The Waiting Room Outside A Dragon's Dentist",
+    "content": "Waiting Room",
     "category": "location"
   },
   {
     "id": "52267C61-58C7-4553-B5A6-35D9F4FABDF7",
-    "content": "A Rooftop Garden During A Thunderstorm",
+    "content": "Rooftop Garden",
     "category": "location"
   },
   {
     "id": "877247AD-136F-4CDF-8F87-0D3D8EEE6BA3",
-    "content": "A Tiny Town's Only Escalator",
+    "content": "Escalator",
     "category": "location"
   },
   {
     "id": "E382763D-AD6E-4512-B460-D7090DDE7857",
-    "content": "A Museum Of Failed Inventions",
+    "content": "Inventors Workshop",
     "category": "location"
   },
   {
     "id": "0CC91BDB-8633-4208-826B-A55FC965AA4A",
-    "content": "The Backstage Area Of A Children's Talent Show",
+    "content": "Backstage",
     "category": "location"
   },
   {
     "id": "B20CCD9B-BF51-4B34-A77B-43D36EF9DEE9",
-    "content": "Wedding Planner For Monsters",
+    "content": "Wedding Planner",
     "category": "profession"
   },
   {
@@ -436,12 +436,12 @@
   },
   {
     "id": "1A211E0E-F92E-4385-BAFD-7277FC817696",
-    "content": "Retired Superhero Accountant",
+    "content": "Superhero",
     "category": "profession"
   },
   {
     "id": "737A017F-35EA-4865-AFED-348DBCC4E8C7",
-    "content": "Overjoyed But Trying To Seem Professional",
+    "content": "Overjoyed",
     "category": "emotion"
   },
   {
@@ -461,12 +461,12 @@
   },
   {
     "id": "CC53C352-00FE-4BAC-9313-09BBAFAB1983",
-    "content": "Terrified Of Disappointing A Child",
+    "content": "Terrified",
     "category": "emotion"
   },
   {
     "id": "1E162AAB-4E79-405E-B5CD-BE98A0C8E9A5",
-    "content": "Deeply Offended By A Compliment",
+    "content": "Deeply Offended",
     "category": "emotion"
   },
   {

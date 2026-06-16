@@ -2,64 +2,85 @@ import SwiftUI
 
 struct GameModeView: View {
     @Environment(AppState.self) private var appState
-    
+    @State private var isShowingSettings = false
+
     var body: some View {
         ZStack {
             Color.theme.darkBackground
                 .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
-                // Fixed Header: Game Selector
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        ForEach(AppState.GameMode.allCases) { game in
-                            Button(game.rawValue) {
-                                withAnimation(.spring()) {
-                                    appState.selectGame(game)
+            VStack(spacing: 0) {
+                // Scrollable, vertically-centered Content Area
+                GeometryReader { geometry in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 32) {
+                            Group {
+                                switch appState.selectedGame {
+                                case .firstLineLastLine:
+                                    firstLineLastLineView
+                                case .changingEmotions:
+                                    changingEmotionsView
                                 }
                             }
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(appState.selectedGame == game ? .white : Color.gray)
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 8)
-                            .overlay(alignment: .bottom) {
-                                Rectangle()
-                                    .fill(appState.selectedGame == game ? Color.theme.accentDeepBlue : Color.clear)
-                                    .frame(height: 2)
-                            }
-                            .animation(.spring(), value: appState.selectedGame)
                         }
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 32)
+                        .frame(minHeight: geometry.size.height, alignment: .center)
                     }
-                    .padding(.horizontal, 32)
-                }
-                .padding(.vertical, 32)
-
-                // Scrollable Content Area
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 32) {
-                        Group {
-                            switch appState.selectedGame {
-                            case .firstLineLastLine:
-                                firstLineLastLineView
-                            case .changingEmotions:
-                                changingEmotionsView
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 24)
                 }
 
-                // Fixed Footer: Regenerate Button
-                Button("Regenerate") {
-                    HapticManager.impact(.light)
-                    appState.regenerateCurrentGame()
+                // Spacer gap between scroll content and footer
+                Spacer()
+                    .frame(height: 16)
+
+                // Fixed Footer: Game Selector + Regenerate Button
+                VStack(spacing: 16) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(AppState.GameMode.allCases) { game in
+                                Button(game.rawValue) {
+                                    withAnimation(.spring()) {
+                                        appState.selectGame(game)
+                                    }
+                                }
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(appState.selectedGame == game ? .white : Color.gray)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 8)
+                                .overlay(alignment: .bottom) {
+                                    Rectangle()
+                                        .fill(appState.selectedGame == game ? Color.theme.accentDeepBlue : Color.clear)
+                                        .frame(height: 2)
+                                }
+                                .animation(.spring(), value: appState.selectedGame)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
+
+                    Button("Regenerate") {
+                        HapticManager.impact(.light)
+                        appState.regenerateCurrentGame()
+                    }
+                    .buttonStyle(.primaryPill)
+                    .accessibilityIdentifier("regenerate_button")
                 }
-                .buttonStyle(.primaryPill)
                 .padding(.horizontal, 32)
                 .padding(.bottom, 32)
-                .accessibilityIdentifier("regenerate_button")
             }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isShowingSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+                .accessibilityIdentifier("game_settings_button")
+            }
+        }
+        .sheet(isPresented: $isShowingSettings) {
+            GameSettingsView()
         }
     }
 

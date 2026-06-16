@@ -2,36 +2,40 @@ import SwiftUI
 
 struct QuestionModeView: View {
     @Environment(AppState.self) private var appState
-    
+    @State private var isShowingSettings = false
+
     var body: some View {
         ZStack {
             Color.theme.darkBackground
                 .ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 32) {
-                SuggestionCardView(spacing: 24) {
-                    Text(appState.currentQuestion?.content ?? "No questions available")
-                        .font(.readableTitle)
-                        .foregroundStyle(Color.theme.offWhite)
-                        .multilineTextAlignment(.leading)
-                        .minimumScaleFactor(0.5)
-                        .accessibilityIdentifier("question_text")
+            GeometryReader { geometry in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 32) {
+                    SuggestionCardView(spacing: 24) {
+                        Text(appState.currentQuestion?.content ?? "No questions available")
+                            .font(.readableTitle)
+                            .foregroundStyle(Color.theme.offWhite)
+                            .multilineTextAlignment(.leading)
+                            .minimumScaleFactor(0.5)
+                            .accessibilityIdentifier("question_text")
 
-                    if appState.isShowingAudienceResponse, let secondaryContent = appState.currentQuestion?.secondaryContent {
-                        VStack(alignment: .leading, spacing: 8) {
-                            SectionHeaderView(text: "AUDIENCE RESPONSE")
+                        if appState.isShowingAudienceResponse, let secondaryContent = appState.currentQuestion?.secondaryContent {
+                            VStack(alignment: .leading, spacing: 8) {
+                                SectionHeaderView(text: "AUDIENCE RESPONSE")
 
-                            Text(secondaryContent)
-                                .font(.title2.weight(.semibold))
-                                .foregroundStyle(Color.theme.offWhite)
-                                .multilineTextAlignment(.leading)
+                                Text(secondaryContent)
+                                    .font(.title2.weight(.semibold))
+                                    .foregroundStyle(Color.theme.offWhite)
+                                    .multilineTextAlignment(.leading)
+                            }
                         }
                     }
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 32)
+                    .frame(minHeight: geometry.size.height, alignment: .center)
                 }
-                }
-                .padding(.horizontal, 32)
-                .padding(.vertical, 32)
             }
 
             VStack {
@@ -55,6 +59,19 @@ struct QuestionModeView: View {
                 }
                 .padding(32)
             }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isShowingSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+                .accessibilityIdentifier("question_settings_button")
+            }
+        }
+        .sheet(isPresented: $isShowingSettings) {
+            QuestionSettingsView()
         }
     }
 }

@@ -8,6 +8,9 @@ struct SettingsView: View {
 
     @State private var isShowingHowToPlay = false
     @State private var isShowingResetConfirmation = false
+    @State private var isShowingQuestionSettings = false
+    @State private var isShowingWordSettings = false
+    @State private var isShowingGameSettings = false
 
     var body: some View {
         ZStack {
@@ -22,6 +25,24 @@ struct SettingsView: View {
                         Text("Manage your suggestion library.")
                             .font(.subheadline)
                             .foregroundStyle(Color.gray)
+
+                        Button("Questions Settings") {
+                            isShowingQuestionSettings = true
+                        }
+                        .buttonStyle(.primaryPill)
+                        .accessibilityIdentifier("questions_settings_button")
+
+                        Button("Words Settings") {
+                            isShowingWordSettings = true
+                        }
+                        .buttonStyle(.primaryPill)
+                        .accessibilityIdentifier("words_settings_button")
+
+                        Button("Games Settings") {
+                            isShowingGameSettings = true
+                        }
+                        .buttonStyle(.primaryPill)
+                        .accessibilityIdentifier("games_settings_button")
                     }
 
                     SuggestionCardView(backgroundColor: Color.theme.headerCardBackground) {
@@ -45,6 +66,15 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $isShowingHowToPlay) {
             HowToPlayView()
+        }
+        .sheet(isPresented: $isShowingQuestionSettings) {
+            QuestionSettingsView()
+        }
+        .sheet(isPresented: $isShowingWordSettings) {
+            WordSettingsView()
+        }
+        .sheet(isPresented: $isShowingGameSettings) {
+            GameSettingsView()
         }
         .confirmationDialog(
             "This will delete all custom suggestions.",

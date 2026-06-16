@@ -5,14 +5,34 @@ struct WordModeView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var persistenceAlertManager: PersistenceAlertManager
     @Environment(AppState.self) private var appState
-    
+    @State private var isShowingSettings = false
+
     var body: some View {
         ZStack {
             Color.theme.darkBackground
                 .ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 32) {
+            GeometryReader { geometry in
+                ScrollView {
+                    SuggestionCardView {
+                        SectionHeaderView(text: appState.selectedCategoryLabel)
+
+                        Text(appState.currentSuggestion?.content ?? "Tap Generate")
+                            .font(.readableTitle)
+                            .foregroundStyle(Color.theme.offWhite)
+                            .multilineTextAlignment(.leading)
+                            .minimumScaleFactor(0.5)
+                            .accessibilityIdentifier("suggestion_text")
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 32)
+                    .frame(minHeight: geometry.size.height, alignment: .center)
+                }
+            }
+
+            VStack(spacing: 16) {
+                Spacer()
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(appState.selectableWordCategories) { category in
@@ -51,32 +71,27 @@ struct WordModeView: View {
                     .padding(.horizontal, 16)
                 }
 
-                SuggestionCardView {
-                    SectionHeaderView(text: appState.selectedCategoryLabel)
-
-                    Text(appState.currentSuggestion?.content ?? "Tap Generate")
-                        .font(.readableTitle)
-                        .foregroundStyle(Color.theme.offWhite)
-                        .multilineTextAlignment(.leading)
-                        .minimumScaleFactor(0.5)
-                        .accessibilityIdentifier("suggestion_text")
-                }
-                }
-                .padding(.horizontal, 32)
-                .padding(.vertical, 32)
-            }
-
-            VStack {
-                Spacer()
-
                 Button("Generate") {
                     HapticManager.impact(.light)
                     appState.generateWordSuggestion()
                 }
                 .buttonStyle(.primaryPill)
                 .accessibilityIdentifier("generate_button")
-                .padding(32)
             }
+            .padding(32)
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isShowingSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+                .accessibilityIdentifier("word_settings_button")
+            }
+        }
+        .sheet(isPresented: $isShowingSettings) {
+            WordSettingsView()
         }
     }
 }
