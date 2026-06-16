@@ -1,9 +1,7 @@
-import SwiftData
 import SwiftUI
 
 struct QuestionModeView: View {
     @Environment(AppState.self) private var appState
-    @Query private var suggestions: [SuggestionItem]
     
     var body: some View {
         ZStack {
@@ -52,12 +50,6 @@ struct QuestionModeView: View {
                 .padding(.horizontal, 32)
                 .padding(.vertical, 32)
             }
-        }
-        .onAppear {
-            appState.suggestions = suggestions
-        }
-        .onChange(of: suggestions) { _, newSuggestions in
-            appState.suggestions = newSuggestions
         }
     }
 }

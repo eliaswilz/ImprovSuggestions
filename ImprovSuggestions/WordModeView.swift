@@ -5,7 +5,6 @@ struct WordModeView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var persistenceAlertManager: PersistenceAlertManager
     @Environment(AppState.self) private var appState
-    @Query private var suggestions: [SuggestionItem]
     
     var body: some View {
         ZStack {
@@ -87,13 +86,6 @@ struct WordModeView: View {
                 .padding(.horizontal, 32)
                 .padding(.vertical, 32)
             }
-        }
-        .onAppear {
-            appState.setModelContext(modelContext)
-            appState.suggestions = suggestions
-        }
-        .onChange(of: suggestions) { _, newSuggestions in
-            appState.suggestions = newSuggestions
         }
     }
 }

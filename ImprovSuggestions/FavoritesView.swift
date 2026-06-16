@@ -12,7 +12,7 @@ struct FavoritesView: View {
                 .ignoresSafeArea()
 
             if favorites.isEmpty {
-                VStack(alignment: .leading, spacing: 16) {
+                SuggestionCardView(spacing: 16) {
                     Text("FAVORITES")
                         .font(.sectionLabel)
                         .tracking(1.5)
@@ -24,10 +24,6 @@ struct FavoritesView: View {
                         .multilineTextAlignment(.leading)
                 }
                 .padding(32)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.theme.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .padding(32)
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 18) {
@@ -37,7 +33,7 @@ struct FavoritesView: View {
                             .foregroundStyle(Color.theme.offWhite.opacity(0.65))
 
                         ForEach(favorites) { favorite in
-                            VStack(alignment: .leading, spacing: 12) {
+                            SuggestionCardView(spacing: 12) {
                                 Text(favorite.category.rawValue.uppercased())
                                     .font(.sectionLabel)
                                     .tracking(1.5)
@@ -56,10 +52,6 @@ struct FavoritesView: View {
                                         .multilineTextAlignment(.leading)
                                 }
                             }
-                            .padding(32)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.theme.cardBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         }
                     }
                     .padding(32)

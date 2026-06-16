@@ -1,9 +1,7 @@
-import SwiftData
 import SwiftUI
 
 struct GameModeView: View {
     @Environment(AppState.self) private var appState
-    @Query private var suggestions: [SuggestionItem]
     
     var body: some View {
         ZStack {
@@ -62,12 +60,6 @@ struct GameModeView: View {
                 .padding(.bottom, 32)
                 .accessibilityIdentifier("regenerate_button")
             }
-        }
-        .onAppear {
-            appState.suggestions = suggestions
-        }
-        .onChange(of: suggestions) { _, newSuggestions in
-            appState.suggestions = newSuggestions
         }
     }
 

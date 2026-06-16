@@ -5,14 +5,19 @@
 //  Created by Elias Wilz on 5/7/26.
 //
 
+import SwiftData
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(AppState.self) private var appState
+    @Query private var suggestions: [SuggestionItem]
+
     init() {
-        let backgroundColor = UIColor(red: 0.102, green: 0.102, blue: 0.102, alpha: 1.0)
-        let borderColor = UIColor(red: 0.165, green: 0.165, blue: 0.165, alpha: 1.0)
-        let activeColor = UIColor(red: 0.467, green: 0.529, blue: 0.765, alpha: 1.0)
-        let inactiveColor = UIColor(red: 0.557, green: 0.584, blue: 0.463, alpha: 1.0)
+        let backgroundColor = UIColor(Color.theme.darkBackground)
+        let borderColor = UIColor(Color.theme.headerCardBackground)
+        let activeColor = UIColor(Color.theme.accentSoftBlue)
+        let inactiveColor = UIColor(Color.theme.accentSage)
         let labelFont = UIFont.systemFont(ofSize: 11, weight: .medium)
         let appearance = UITabBarAppearance()
 
@@ -75,6 +80,13 @@ struct ContentView: View {
             .toolbarBackground(Color.theme.darkBackground, for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
             .background(Color.theme.darkBackground)
+        }
+        .onAppear {
+            appState.setModelContext(modelContext)
+            appState.suggestions = suggestions
+        }
+        .onChange(of: suggestions) { _, newSuggestions in
+            appState.suggestions = newSuggestions
         }
     }
 }
