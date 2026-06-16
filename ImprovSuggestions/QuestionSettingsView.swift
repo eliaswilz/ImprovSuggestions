@@ -8,6 +8,19 @@ struct QuestionSettingsView: View {
             ZStack {
                 Color.theme.darkBackground
                     .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        SuggestionCardView {
+                            SectionHeaderView(text: "NOTE")
+
+                            Text("The Simulate Audience Response button isn't yet functional.")
+                                .font(.subheadline)
+                                .foregroundStyle(Color.gray)
+                        }
+                    }
+                    .padding(32)
+                }
             }
             .navigationTitle("Questions Settings")
             .navigationBarTitleDisplayMode(.inline)

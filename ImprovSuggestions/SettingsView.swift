@@ -2,12 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct SettingsView: View {
-    @Environment(\.modelContext) private var modelContext
-    @EnvironmentObject private var persistenceAlertManager: PersistenceAlertManager
-    @Query private var suggestions: [SuggestionItem]
-
     @State private var isShowingHowToPlay = false
-    @State private var isShowingResetConfirmation = false
     @State private var isShowingQuestionSettings = false
     @State private var isShowingWordSettings = false
     @State private var isShowingGameSettings = false
@@ -54,12 +49,6 @@ struct SettingsView: View {
                         .buttonStyle(.primaryPill)
                         .accessibilityIdentifier("how_to_play_button")
                     }
-
-                    Button("Reset App Data") {
-                        isShowingResetConfirmation = true
-                    }
-                    .buttonStyle(.primaryPill)
-                    .accessibilityIdentifier("reset_app_data_button")
                 }
                 .padding(32)
             }
@@ -76,30 +65,9 @@ struct SettingsView: View {
         .sheet(isPresented: $isShowingGameSettings) {
             GameSettingsView()
         }
-        .confirmationDialog(
-            "This will delete all custom suggestions.",
-            isPresented: $isShowingResetConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Reset App Data", role: .destructive) {
-                resetAppData()
-            }
-
-            Button("Cancel", role: .cancel) { }
-        }
-    }
-
-    private func resetAppData() {
-        DataManager.shared.resetAppData(
-            suggestions: suggestions,
-            modelContext: modelContext,
-            alertManager: persistenceAlertManager
-        )
     }
 }
 
 #Preview {
     SettingsView()
-        .environmentObject(PersistenceAlertManager.shared)
-        .modelContainer(for: SuggestionItem.self, inMemory: true)
 }
