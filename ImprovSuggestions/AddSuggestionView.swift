@@ -9,7 +9,7 @@ struct AddSuggestionView: View {
     @State private var selectedCategory: Category = .object
     @State private var content = ""
 
-    private let allowedCategories: [Category] = [.object, .location, .profession, .emotion]
+    private let allowedCategories: [Category] = [.object, .location, .profession, .celebrity]
     private let maxLength = 120
 
     private var characterCount: Int {
