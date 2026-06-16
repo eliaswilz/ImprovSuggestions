@@ -64,12 +64,6 @@ struct ContentView: View {
                             .accessibilityIdentifier("games_tab")
                     }
 
-                FavoritesView()
-                    .tabItem {
-                        Label("Favorites", systemImage: "heart.fill")
-                            .accessibilityIdentifier("favorites_tab")
-                    }
-
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")

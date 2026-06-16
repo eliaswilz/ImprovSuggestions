@@ -118,15 +118,6 @@ final class AppState {
         currentSuggestion = queueManager.next(from: filteredWordSuggestions)
         wordQueueManagers[categoryKey] = queueManager
     }
-    
-    func toggleFavorite(persistenceAlertManager: PersistenceAlertManager) {
-        guard let currentSuggestion, let modelContext else { return }
-        DataManager.shared.toggleFavorite(
-            suggestion: currentSuggestion,
-            modelContext: modelContext,
-            alertManager: persistenceAlertManager
-        )
-    }
 
     // MARK: - Question Mode Methods
     func showNextQuestion() {

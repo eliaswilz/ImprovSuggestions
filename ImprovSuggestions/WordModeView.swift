@@ -51,7 +51,7 @@ struct WordModeView: View {
                     .padding(.horizontal, 16)
                 }
 
-                SuggestionCardView(trailingPadding: 28) {
+                SuggestionCardView {
                     SectionHeaderView(text: appState.selectedCategoryLabel)
 
                     Text(appState.currentSuggestion?.content ?? "Tap Generate")
@@ -61,20 +61,13 @@ struct WordModeView: View {
                         .minimumScaleFactor(0.5)
                         .accessibilityIdentifier("suggestion_text")
                 }
-                .overlay(alignment: .topTrailing) {
-                    Button {
-                        HapticManager.impact(.medium)
-                        appState.toggleFavorite(persistenceAlertManager: persistenceAlertManager)
-                    } label: {
-                        Image(systemName: appState.currentSuggestion?.isFavorite == true ? "heart.fill" : "heart")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(appState.currentSuggestion?.isFavorite == true ? Color.theme.accentPurple : Color.gray.opacity(0.65))
-                            .padding(16)
-                    }
-                    .disabled(appState.currentSuggestion == nil)
-                    .opacity(appState.currentSuggestion == nil ? 0.5 : 1)
-                    .accessibilityIdentifier("favorite_button")
                 }
+                .padding(.horizontal, 32)
+                .padding(.vertical, 32)
+            }
+
+            VStack {
+                Spacer()
 
                 Button("Generate") {
                     HapticManager.impact(.light)
@@ -82,9 +75,7 @@ struct WordModeView: View {
                 }
                 .buttonStyle(.primaryPill)
                 .accessibilityIdentifier("generate_button")
-                }
-                .padding(.horizontal, 32)
-                .padding(.vertical, 32)
+                .padding(32)
             }
         }
     }

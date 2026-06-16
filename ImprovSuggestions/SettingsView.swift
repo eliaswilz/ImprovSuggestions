@@ -47,7 +47,7 @@ struct SettingsView: View {
             HowToPlayView()
         }
         .confirmationDialog(
-            "This will delete all custom suggestions and clear all favorites.",
+            "This will delete all custom suggestions.",
             isPresented: $isShowingResetConfirmation,
             titleVisibility: .visible
         ) {
