@@ -37,7 +37,7 @@ struct GameModeView: View {
                 VStack(spacing: 16) {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            ForEach(AppState.GameMode.allCases) { game in
+                            ForEach(appState.availableGames) { game in
                                 Button(game.rawValue) {
                                     withAnimation(.spring()) {
                                         appState.selectGame(game)

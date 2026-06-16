@@ -56,6 +56,50 @@ final class AppState {
     var lastLine: SuggestionItem?
     var emotions: [SuggestionItem] = []
     private var dialogueQueueManager = SuggestionQueueManager()
+
+    private static let enabledGamesKey = "enabledGames"
+
+    var enabledGames: Set<GameMode> = AppState.loadEnabledGames() {
+        didSet {
+            AppState.saveEnabledGames(enabledGames)
+            ensureValidSelectedGame()
+        }
+    }
+
+    var availableGames: [GameMode] {
+        GameMode.allCases.filter { enabledGames.contains($0) }
+    }
+
+    func isGameEnabled(_ game: GameMode) -> Bool {
+        enabledGames.contains(game)
+    }
+
+    func setGame(_ game: GameMode, enabled: Bool) {
+        if enabled {
+            enabledGames.insert(game)
+        } else {
+            // Keep at least one game enabled.
+            guard enabledGames.count > 1 else { return }
+            enabledGames.remove(game)
+        }
+    }
+
+    private func ensureValidSelectedGame() {
+        guard !enabledGames.contains(selectedGame), let fallback = availableGames.first else { return }
+        selectGame(fallback)
+    }
+
+    private static func loadEnabledGames() -> Set<GameMode> {
+        guard let rawValues = UserDefaults.standard.array(forKey: enabledGamesKey) as? [String] else {
+            return Set(GameMode.allCases)
+        }
+        let games = Set(rawValues.compactMap(GameMode.init(rawValue:)))
+        return games.isEmpty ? Set(GameMode.allCases) : games
+    }
+
+    private static func saveEnabledGames(_ games: Set<GameMode>) {
+        UserDefaults.standard.set(games.map(\.rawValue), forKey: enabledGamesKey)
+    }
     
     private var dialogueLines: [SuggestionItem] {
         suggestions.filter { $0.matchesCategory(.dialogue) }

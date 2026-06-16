@@ -8,6 +8,19 @@ struct WordSettingsView: View {
             ZStack {
                 Color.theme.darkBackground
                     .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        SuggestionCardView {
+                            SectionHeaderView(text: "TIP")
+
+                            Text("Press and hold a category to deselect all other categories.")
+                                .font(.subheadline)
+                                .foregroundStyle(Color.gray)
+                        }
+                    }
+                    .padding(32)
+                }
             }
             .navigationTitle("Words Settings")
             .navigationBarTitleDisplayMode(.inline)

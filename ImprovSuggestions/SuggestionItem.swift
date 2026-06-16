@@ -64,7 +64,6 @@ final class SuggestionItem {
     var secondaryContent: String?
     private var storedCategory: Category?
     var isFavorite: Bool
-    var isCustom: Bool
 
     var category: Category {
         get { storedCategory ?? .question }
@@ -84,14 +83,12 @@ final class SuggestionItem {
         content: String,
         secondaryContent: String? = nil,
         category: Category,
-        isFavorite: Bool = false,
-        isCustom: Bool = false
+        isFavorite: Bool = false
     ) {
         self.id = id
         self.content = content
         self.secondaryContent = secondaryContent
         self.storedCategory = category
         self.isFavorite = isFavorite
-        self.isCustom = isCustom
     }
 }

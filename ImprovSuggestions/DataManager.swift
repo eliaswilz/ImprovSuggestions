@@ -36,7 +36,7 @@ final class DataManager {
         try removeStalePlaceholderSuggestions(modelContext: modelContext)
 
         let existingSuggestions = try modelContext.fetch(descriptor)
-        let brokenBuiltInSuggestions = existingSuggestions.filter { !$0.isCustom && $0.isMissingStoredCategory }
+        let brokenBuiltInSuggestions = existingSuggestions.filter { $0.isMissingStoredCategory }
 
         for suggestion in brokenBuiltInSuggestions {
             modelContext.delete(suggestion)
@@ -71,45 +71,4 @@ final class DataManager {
         }
     }
 
-    func resetAppData(suggestions: [SuggestionItem], modelContext: ModelContext, alertManager: PersistenceAlertManager) {
-        for suggestion in suggestions {
-            if suggestion.isCustom {
-                modelContext.delete(suggestion)
-            }
-        }
-
-        do {
-            try modelContext.save()
-        } catch {
-            modelContext.rollback()
-            alertManager.showSaveError(
-                action: "Your app data could not be reset.",
-                error: error
-            )
-        }
-    }
-
-    func addCustomSuggestion(
-        content: String,
-        category: Category,
-        modelContext: ModelContext,
-        alertManager: PersistenceAlertManager
-    ) {
-        let suggestion = SuggestionItem(
-            content: content,
-            category: category,
-            isCustom: true
-        )
-        modelContext.insert(suggestion)
-
-        do {
-            try modelContext.save()
-        } catch {
-            modelContext.rollback()
-            alertManager.showSaveError(
-                action: "Your custom suggestion could not be saved.",
-                error: error
-            )
-        }
-    }
 }
