@@ -20,7 +20,6 @@ extension Font {
     static let readableTitle = Font.system(size: 34, weight: .bold, design: .default)
     static let readableHeadline = Font.system(size: 24, weight: .semibold, design: .default)
     static let readableBody = Font.system(size: 20, weight: .regular, design: .default)
-    static let suggestionTitle = Font.system(size: 34, weight: .bold, design: .default)
     static let sectionLabel = Font.caption.weight(.semibold)
 }
 

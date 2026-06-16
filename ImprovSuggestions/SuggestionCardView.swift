@@ -55,7 +55,7 @@ extension View {
         Color.theme.darkBackground.ignoresSafeArea()
         SuggestionCardView {
             Text("Sample Content")
-                .font(.suggestionTitle)
+                .font(.readableTitle)
                 .foregroundStyle(Color.theme.offWhite)
         }
         .padding(32)

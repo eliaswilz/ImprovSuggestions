@@ -56,7 +56,7 @@ struct WordModeView: View {
                     SectionHeaderView(text: appState.selectedCategoryLabel)
 
                     Text(appState.currentSuggestion?.content ?? "Tap Generate")
-                        .font(.suggestionTitle)
+                        .font(.readableTitle)
                         .foregroundStyle(Color.theme.offWhite)
                         .multilineTextAlignment(.leading)
                         .minimumScaleFactor(0.5)

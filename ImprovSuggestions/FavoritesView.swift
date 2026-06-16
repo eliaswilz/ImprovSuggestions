@@ -19,7 +19,7 @@ struct FavoritesView: View {
                         .foregroundStyle(Color.theme.accentSage)
 
                     Text("No favorites yet")
-                        .font(.suggestionTitle)
+                        .font(.readableTitle)
                         .foregroundStyle(Color.theme.offWhite)
                         .multilineTextAlignment(.leading)
                 }
@@ -44,7 +44,7 @@ struct FavoritesView: View {
                                     .foregroundStyle(Color.theme.accentSage)
 
                                 Text(favorite.content)
-                                    .font(.suggestionTitle)
+                                    .font(.readableTitle)
                                     .foregroundStyle(Color.theme.offWhite)
                                     .multilineTextAlignment(.leading)
                                     .minimumScaleFactor(0.5)

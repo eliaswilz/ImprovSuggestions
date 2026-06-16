@@ -14,7 +14,7 @@ struct QuestionModeView: View {
                 VStack(alignment: .leading, spacing: 32) {
                 SuggestionCardView(spacing: 24) {
                     Text(appState.currentQuestion?.content ?? "No questions available")
-                        .font(.suggestionTitle)
+                        .font(.readableTitle)
                         .foregroundStyle(Color.theme.offWhite)
                         .multilineTextAlignment(.leading)
                         .minimumScaleFactor(0.5)
